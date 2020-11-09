@@ -33,8 +33,8 @@ include_once NW_MODULE_PATH . '/admin/functions.php';
 
 xoops_cp_header();
 
-adminmenu(2);
-echo '<br /><br /><br />';
+adminmenu(2, _AM_NW_GROUPPERM);
+echo '<h2>' . _AM_NW_GROUPPERM . '</h2>';
 $permtoset= isset($_POST['permtoset']) ? intval($_POST['permtoset']) : 1;
 $selected=array('','','');
 $selected[$permtoset-1]=' selected';

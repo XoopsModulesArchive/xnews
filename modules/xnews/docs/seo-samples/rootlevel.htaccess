@@ -1,0 +1,31 @@
+## Before copying htaccess file to root please copy data from existing htaccess if there and needed ##
+## rename to .htaccess ##
+
+RewriteEngine On
+## xnews - begin ##
+RewriteRule ^xnews/([a-z\x2D]+)\.([a-z]+)\.([0-9.]+)/ modules/xnews/index.php?seoOp=$2&seoArg=$3 [L,NC,QSA]
+RewriteRule ^xnews/([a-z]+)\.([0-9.]+)/ modules/xnews/index.php?seoOp=$1&seoArg=$2 [L,NC,QSA]
+## xnews - end
+
+## Change clone1 to name of your clone and uncomment all for lines of code like above ##
+## clone1 - begin ##
+RewriteRule ^clone1/([a-z\x2D]+)\.([a-z]+)\.([0-9.]+)/ modules/clone1/index.php?seoOp=$2&seoArg=$3 [L,NC,QSA]
+RewriteRule ^clone1/([a-z]+)\.([0-9.]+)/ modules/clone1/index.php?seoOp=$1&seoArg=$2 [L,NC,QSA]
+## clone1 - end ##
+
+## clone2 - begin ##
+RewriteRule ^clone2/([a-z\x2D]+)\.([a-z]+)\.([0-9.]+)/ modules/clone2/index.php?seoOp=$2&seoArg=$3 [L,NC,QSA]
+RewriteRule ^clone2/([a-z]+)\.([0-9.]+)/ modules/clone2/index.php?seoOp=$1&seoArg=$2 [L,NC,QSA]
+## legal - end ##
+
+## If you have other apps like below add new ones or uncomment samples
+## publisher - begin ##
+#RewriteCond %{request_url} !^/publisher/
+#RewriteRule ^([a-z]+)\.([a-z]+)\.([0-9.]+)/  modules/publisher/index.php?seoOp=$2&seoArg=$3
+## legal - end ##
+
+## smartsection - begin ##
+#RewriteCond %{request_url} !^/smartsection/
+#RewriteRule ^([a-z]+)\.([a-z]+)\.([0-9.]+)/  modules/smartsection/seo.php?seoOp=$2&seoArg=$3
+## legal - end ##
+

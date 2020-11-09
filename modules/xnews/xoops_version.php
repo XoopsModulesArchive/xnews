@@ -42,13 +42,13 @@ if (!defined('NW_MODULE_PATH')) {
 
 
 $modversion["name"] = "xNews";
-$modversion['version'] = 1.68;
+$modversion['version'] = 1.71;
 $modversion['description'] = _MI_NW_DESC;
-$modversion['credits'] = "The XOOPS Project, Christian, Pilou, Marco, ALL the members of the Newbb Team, GIJOE, Zoullou, Mithrandir, Setec Astronomy, Marcan, 5vision, Anne And DNPROSSI";
+$modversion['credits'] = "The XOOPS Project, Christian, Pilou, Marco, ALL the members of the Newbb Team, GIJOE, Zoullou, Mithrandir, Setec Astronomy, Marcan, 5vision, Anne, Wishcraft, DNPROSSI";
 $modversion['author'] = "The XOOPS Project Module Dev Team & Instant Zero";
 $modversion['help'] = "";
 $modversion['license'] = "GPL see LICENSE";
-$modversion['official'] = 1;
+$modversion['official'] = 0;
 $modversion['image'] = "images/" . NW_MODULE_DIR_NAME . "_logo.png";
 $modversion['dirname'] = NW_MODULE_DIR_NAME;
 $modversion['onInstall'] = 'include/install.php';
@@ -90,6 +90,11 @@ $modversion['templates'][9]['file'] = 'nw_news_whos_who.html';
 $modversion['templates'][9]['description'] = "Who's who";
 $modversion['templates'][10]['file'] = 'nw_news_topics_directory.html';
 $modversion['templates'][10]['description'] = "Topics Directory";
+//WISHCRAFT
+$modversion['templates'][11]['file'] = 'nw_news_article_pdf.html';
+$modversion['templates'][11]['description'] = 'PDF Article Layout';
+$modversion['templates'][12]['file'] = 'nw_news_item_pdf.html';
+$modversion['templates'][12]['description'] = 'PDF Item Layout';
 
 $i = 0;
 
@@ -239,7 +244,7 @@ if (is_object($xoopsModule) && $xoopsModule->getVar('dirname') == $modversion['d
 			foreach ($topics_arr as $onetopic) {
 				if ($gperm_handler->checkRight('nw_view', $onetopic->topic_id(), $groups, $xoopsModule->getVar('mid')) && $onetopic->menu()) {
 	            	$modversion['sub'][$i]['name'] = $onetopic->topic_title();
-  					$modversion['sub'][$i]['url'] = "index.php?storytopic=" . $onetopic->topic_id();
+  					$modversion['sub'][$i]['url'] = "index.php?topic_id=" . $onetopic->topic_id();
    				}
        			$i++;
    			}
@@ -472,6 +477,39 @@ $modversion['config'][$i]['valuetype'] = 'int';
 $modversion['config'][$i]['default'] = 1;
 
 /**
+ * Display attached PDF - 1.71
+ */
+$i++;
+$modversion['config'][$i]['name'] = 'pdf_display';
+$modversion['config'][$i]['title'] = '_MI_NW_PDF_DISPLAY';
+$modversion['config'][$i]['description'] = '_MI_NW_PDF_DISPLAY_DESC';
+$modversion['config'][$i]['formtype'] = 'yesno';
+$modversion['config'][$i]['valuetype'] = 'int';
+$modversion['config'][$i]['default'] = 0;
+
+/**
+ * Display attached images - 1.71
+ */
+$i++;
+$modversion['config'][$i]['name'] = 'images_display';
+$modversion['config'][$i]['title'] = '_MI_NW_IMAGES_DISPLAY';
+$modversion['config'][$i]['description'] = '_MI_NW_IMAGES_DISPLAY_DESC';
+$modversion['config'][$i]['formtype'] = 'yesno';
+$modversion['config'][$i]['valuetype'] = 'int';
+$modversion['config'][$i]['default'] = 0;
+
+/**
+ * Actvate PDF plugin detection - 1.71
+ */
+$i++;
+$modversion['config'][$i]['name'] = 'pdf_detect';
+$modversion['config'][$i]['title'] = '_MI_NW_PDF_DETECT';
+$modversion['config'][$i]['description'] = '_MI_NW_PDF_DETECT_DESC';
+$modversion['config'][$i]['formtype'] = 'yesno';
+$modversion['config'][$i]['valuetype'] = 'int';
+$modversion['config'][$i]['default'] = 0;
+
+/**
  * Display print, friend and pdf icons top-bottom-both-none 
  */
 $i++;
@@ -514,6 +552,40 @@ $modversion['config'][$i]['description'] = '_MI_NW_SEOPATHDESC';
 $modversion['config'][$i]['formtype'] = 'textbox';
 $modversion['config'][$i]['valuetype'] = 'text';
 $modversion['config'][$i]['default'] = 'news';
+
+//WISHCRAFT
+/**
+ * Seo end of URL for Standard
+ */
+$i++;
+$modversion['config'][$i]['name'] = 'seo_endofurl';
+$modversion['config'][$i]['title'] = "_MI_NW_SEOENDOFURL";
+$modversion['config'][$i]['description'] = "_MI_NW_SEOENDOFURL_DESC";
+$modversion['config'][$i]['formtype'] = 'text';
+$modversion['config'][$i]['valuetype'] = 'text';
+$modversion['config'][$i]['default'] = '.html';
+
+/**
+ * Seo end of URL for RSS
+ */
+$i++;
+$modversion['config'][$i]['name'] = 'seo_endofurl_rss';
+$modversion['config'][$i]['title'] = "_MI_NW_SEOENDOFURLRSS";
+$modversion['config'][$i]['description'] = "_MI_NW_SEOENDOFURLRSS_DESC";
+$modversion['config'][$i]['formtype'] = 'text';
+$modversion['config'][$i]['valuetype'] = 'text';
+$modversion['config'][$i]['default'] = '.rss';
+
+/**
+ * Seo end of URL for PDF
+ */
+$i++;
+$modversion['config'][$i]['name'] = 'seo_endofurl_pdf';
+$modversion['config'][$i]['title'] = "_MI_NW_SEOENDOFURLPDF";
+$modversion['config'][$i]['description'] = "_MI_NW_SEOENDOFURLPDF_DESC";
+$modversion['config'][$i]['formtype'] = 'text';
+$modversion['config'][$i]['valuetype'] = 'text';
+$modversion['config'][$i]['default'] = '.pdf';
 
 /**
  * Seo level
@@ -790,7 +862,7 @@ $modversion['config'][$i]['valuetype'] = 'text';
 $modversion['config'][$i]['default'] = '';
 
 /**
- * Max width
+ * Image max width
  */
 $i++;
 $modversion['config'][$i]['name'] = 'maxwidth';
@@ -801,7 +873,7 @@ $modversion['config'][$i]['valuetype'] = 'int';
 $modversion['config'][$i]['default'] = 640;
 
 /**
- * Max height
+ * Image max height
  */
 $i++;
 $modversion['config'][$i]['name'] = 'maxheight';
@@ -810,6 +882,28 @@ $modversion['config'][$i]['description'] = '';
 $modversion['config'][$i]['formtype'] = 'textbox';
 $modversion['config'][$i]['valuetype'] = 'int';
 $modversion['config'][$i]['default'] = 480;
+
+/**
+ * Thumb max width
+ */
+$i++;
+$modversion['config'][$i]['name'] = 'thumb_maxwidth';
+$modversion['config'][$i]['title'] = '_MI_NW_THUMB_MAX_WIDTH';
+$modversion['config'][$i]['description'] = '';
+$modversion['config'][$i]['formtype'] = 'textbox';
+$modversion['config'][$i]['valuetype'] = 'int';
+$modversion['config'][$i]['default'] = 150;
+
+/**
+ * Thumb max max height
+ */
+$i++;
+$modversion['config'][$i]['name'] = 'thumb_maxheight';
+$modversion['config'][$i]['title'] = '_MI_NW_THUMB_MAX_HEIGHT';
+$modversion['config'][$i]['description'] = '';
+$modversion['config'][$i]['formtype'] = 'textbox';
+$modversion['config'][$i]['valuetype'] = 'int';
+$modversion['config'][$i]['default'] = 150;
 
 // Notification
 $modversion['hasNotification'] = 1;

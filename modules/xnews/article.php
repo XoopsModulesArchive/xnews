@@ -151,7 +151,7 @@ $gperm_handler =& xoops_gethandler('groupperm');
 if (is_object($xoopsUser)) {
     $groups = $xoopsUser->getGroups();
 } else {
-	$groups = XOOPS_GROUP_ANONYMOUS;
+	$groups = array(XOOPS_GROUP_ANONYMOUS => XOOPS_GROUP_ANONYMOUS);
 }
 if (!$gperm_handler->checkRight('nw_view', $article->topicid(), $groups, $xoopsModule->getVar('mid'))) {
 	redirect_header(NW_MODULE_URL . '/index.php', 3, _NOPERM);
@@ -162,6 +162,12 @@ $storypage = isset($_GET['page']) ? intval($_GET['page']) : 0;
 $dateformat = nw_getmoduleoption('dateformat', NW_MODULE_DIR_NAME);
 $hcontent='';
 
+//DNPROSSI - Added for adobe detection * does not work in msie
+$browser = $_SERVER['HTTP_USER_AGENT'];
+//'msie', 'firefox', 'safari', 'webkit', 'opera', 'netscape', 'konqueror', 'gecko'
+if ( !preg_match("/msie[^;]*/i", $browser) ) {
+	$has_adobe = nw_detect_adobe();
+} else {  $has_adobe = 1; }
 /**
  * update counter only when viewing top page and when you are not the author or an admin
  */
@@ -232,7 +238,7 @@ if (xoops_trim($bodytext) != '') {
         $story['text'] = $story['text'].'<br />'.nw_getmoduleoption('advertisement', NW_MODULE_DIR_NAME).'<br />'.$bodytext;
     }
 }
-// Publicité
+// PublicitÃ©
 $xoopsTpl->assign('advertisement', nw_getmoduleoption('advertisement', NW_MODULE_DIR_NAME));
 
 // ****************************************************************************************************************
@@ -316,23 +322,60 @@ if ( $article->uname() != '' )
 $xoopsTpl->assign('lang_reads', _READS);
 $xoopsTpl->assign('mail_link', 'mailto:?subject='.sprintf(_MA_NW_INTARTICLE,$xoopsConfig['sitename']).'&amp;body='.sprintf(_MA_NW_INTARTFOUND, $xoopsConfig['sitename']).':  '.NW_MODULE_URL . '/article.php?storyid='.$article->storyid());
 
+//DNPROSSI - Added -1.71 adobe reader detection - diplay_pdf - diplay_images
+if ( nw_getmoduleoption('pdf_detect', NW_MODULE_DIR_NAME) == 1 )
+{
+	
+	$xoopsTpl->assign('has_adobe', $has_adobe);
+} 
+else
+{
+	$xoopsTpl->assign('has_adobe', 1);
+}	
+
+$xoopsTpl->assign('diplay_pdf', nw_getmoduleoption('pdf_display', NW_MODULE_DIR_NAME));
+$xoopsTpl->assign('display_images', nw_getmoduleoption('images_display', NW_MODULE_DIR_NAME));
+
 $xoopsTpl->assign('lang_attached_files',_MA_NW_ATTACHEDFILES);
 $sfiles = new nw_sFiles();
 $filesarr = $newsfiles = array();
 $filesarr=$sfiles->getAllbyStory($storyid);
 $filescount=count($filesarr);
+//DNPROSSI - Added count variables for pdf - images columns
+$row_images = array();
+$row_pdf = array();
+$row_images_count = $article->imagerows();
+$row_pdf_count = $article->pdfrows();
+$k = 0;
+$j = 0;
 $xoopsTpl->assign('attached_files_count',$filescount);
 if($filescount>0) {
 	foreach ($filesarr as $onefile)	{
 		if ( strstr($onefile->getMimetype(), 'image') ) {
 			$mime = 'image';
-			$newsfiles[]=Array('visitlink' => NW_ATTACHED_FILES_URL . '/' . $onefile->getDownloadname(), 'file_realname'=>$onefile->getFileRealName(), 'file_mimetype'=>$mime);
-			//trigger_error($mime, E_USER_WARNING); 
+			//DNPROSSI - Added file_downloadname
+			$newsfiles[]=Array('visitlink' => NW_ATTACHED_FILES_URL . '/' . $onefile->getDownloadname(), 'file_realname'=>$onefile->getFileRealName(), 'file_mimetype'=>$mime, 'file_downloadname'=>NW_ATTACHED_FILES_URL.'/'.$onefile->getDownloadname());
+		    $newsimages=Array('visitlink' => NW_ATTACHED_FILES_URL . '/' . $onefile->getDownloadname(), 'file_realname'=>$onefile->getFileRealName(), 'file_mimetype'=>$mime, 'thumbname'=>NW_ATTACHED_FILES_URL.'/thumb_'.$onefile->getDownloadname());
+			$row_images[$j][] = $newsimages;
+			$j++;
+			if ($j == $row_images_count) {
+				$j = 0;
+			}
 		} else {
 			$newsfiles[]=Array('file_id'=>$onefile->getFileid(), 'visitlink' => NW_MODULE_URL . '/visit.php?fileid='.$onefile->getFileid(),'file_realname'=>$onefile->getFileRealName(), 'file_attacheddate'=>formatTimestamp($onefile->getDate(),$dateformat), 'file_mimetype'=>$onefile->getMimetype(), 'file_downloadname'=>NW_ATTACHED_FILES_URL.'/'.$onefile->getDownloadname());
+			$newspdf=Array('file_id'=>$onefile->getFileid(), 'visitlink' => NW_MODULE_URL . '/visit.php?fileid='.$onefile->getFileid(),'file_realname'=>$onefile->getFileRealName(), 'file_attacheddate'=>formatTimestamp($onefile->getDate(),$dateformat), 'file_mimetype'=>$onefile->getMimetype(), 'file_downloadname'=>NW_ATTACHED_FILES_URL.'/'.$onefile->getDownloadname());
+			$row_pdf[$k][] = $newspdf;
+			$k++;
+			if ($k == $row_pdf_count) {
+				$k = 0;
+			}
 	    }
 	}
-	$xoopsTpl->assign('attached_files',$newsfiles);
+	$xoopsTpl->assign('attached_files', $newsfiles);
+	$xoopsTpl->assign('attached_images', $row_images);
+	$xoopsTpl->assign('attached_pdf', $row_pdf);
+	$xoopsTpl->assign('images_count', count($row_images));
+	$xoopsTpl->assign('pdf_count', count($row_pdf));
 }
 
 /**
@@ -479,7 +522,6 @@ if(nw_getmoduleoption('bookmarkme', NW_MODULE_DIR_NAME)) {
 	$xoopsTpl->assign('bookmarkme', false);
 }
 
-
 /**
  * Enable users to vote
  *
@@ -529,7 +571,7 @@ $xoopsTpl->assign('print_link', $printLink);
    	
 $pdf_item = '';
 if ( $seo_enabled != 0 ) { $pdf_item = nw_remove_accents($article->title()); }
-$pdfLink = "<a target='_blank' href='" . nw_seo_UrlGenerator("pdf", $storyid, $pdf_item) . "' title='" . _MA_NW_MAKEPDF . "'>";
+$pdfLink = "<a target='_blank' href='" . nw_seo_UrlGenerator(_MA_NW_SEO_PDF, $storyid, $pdf_item) . "' title='" . _MA_NW_MAKEPDF . "'>";
 $pdfLink .= "<img src='" . NW_MODULE_URL . "/images/acrobat.png' width='28px' height='28px' border='0' alt='" . _MA_NW_MAKEPDF . "'/></a>";
 $xoopsTpl->assign('pdf_link', $pdfLink);   	
 
@@ -549,10 +591,15 @@ if(nw_getmoduleoption('tags', NW_MODULE_DIR_NAME)) {
 }
 
 // Include the comments
-include_once XOOPS_ROOT_PATH . "/include/comment_view.php";
-include_once XOOPS_ROOT_PATH . "/class/commentrenderer.php";
 // Problem with url_rewrite and posting comments :
-if ( $seo_enabled != 0 ) {
+if ( $xoopsModuleConfig['com_rule'] != 0 )
+{
+	include_once XOOPS_ROOT_PATH . "/include/comment_view.php";
+	include_once XOOPS_ROOT_PATH . "/class/commentrenderer.php";
+	
+	if ( $seo_enabled != 0 ) 
+	{
+	
 	$navbar = '
 <form method="get" action="' . NW_MODULE_URL . '/' . $comment_config['pageName'] . '">
 <table width="95%" class="outer" cellspacing="1">
@@ -618,8 +665,7 @@ if ( $seo_enabled != 0 ) {
 		'deletecomment_link' => NW_MODULE_URL . '/comment_delete.php?com_itemid=' . $com_itemid . '&amp;com_order=' . $com_order . '&amp;com_mode=' . $com_mode . $link_extra,
 		'replycomment_link' => NW_MODULE_URL . '/comment_reply.php?com_itemid='  .$com_itemid . '&amp;com_order=' . $com_order . '&amp;com_mode=' . $com_mode . $link_extra));
 	$xoopsTpl->_tpl_vars['commentsnav'] = str_replace("self.location.href='", "self.location.href='" . NW_MODULE_URL . '/', $xoopsTpl->_tpl_vars['commentsnav']);
-
-
+	}
 }
 
 include_once XOOPS_ROOT_PATH.'/footer.php';

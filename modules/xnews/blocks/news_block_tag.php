@@ -28,6 +28,22 @@ if (!defined('XOOPS_ROOT_PATH')) {
 	die('XOOPS root path not defined');
 }
 
+/**
+ * Solves issue when upgrading xoops version
+ * Paths not set and block would not work
+*/
+if (!defined('NW_MODULE_PATH')) {
+	define("NW_SUBPREFIX", "nw");
+	define("NW_MODULE_DIR_NAME", "xnews");
+	define("NW_MODULE_PATH", XOOPS_ROOT_PATH . "/modules/" . NW_MODULE_DIR_NAME);
+	define("NW_MODULE_URL", XOOPS_URL . "/modules/" . NW_MODULE_DIR_NAME);
+	define("NW_UPLOADS_NEWS_PATH", XOOPS_ROOT_PATH . "/uploads/" . NW_MODULE_DIR_NAME);
+	define("NW_TOPICS_FILES_PATH", XOOPS_ROOT_PATH . "/uploads/" . NW_MODULE_DIR_NAME . "/topics");
+	define("NW_ATTACHED_FILES_PATH", XOOPS_ROOT_PATH . "/uploads/" . NW_MODULE_DIR_NAME . "/attached");
+	define("NW_TOPICS_FILES_URL", XOOPS_URL . "/uploads/" . NW_MODULE_DIR_NAME . "/topics");
+	define("NW_ATTACHED_FILES_URL", XOOPS_URL . "/uploads/" . NW_MODULE_DIR_NAME . "/attached");
+}
+
 function nw_news_tag_block_cloud_show($options)
 {
 	require_once XOOPS_ROOT_PATH.'/modules/tag/blocks/block.php';

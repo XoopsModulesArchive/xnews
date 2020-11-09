@@ -31,6 +31,36 @@
 
 </script>
 
+<{if $display_images == 1 && $images_count > 0}>
+	<table width="100%" border="0" style="padding: 5px;">
+		<{section name = i loop = $attached_images}>
+			<tr>
+				<{foreach item = onefile from = $attached_images[i]}>
+					<td align="center">
+						<a href="<{$onefile.visitlink}>" target='_blank' title="<{$onefile.file_realname}>">
+							<img src="<{$onefile.thumbname}>" border="0" alt="<{$onefile.file_realname}>"/>
+						</a>
+					</td>
+				<{/foreach}>
+			</tr>
+		<{/section}>
+	</table>
+<{/if}>	
+
+<{if $diplay_pdf == 1 && $has_adobe == 1 && $pdf_count > 0}>
+	<table width="98%" border="0" style="padding: 5px;">
+		<{section name = i loop = $attached_pdf}>
+			<tr>
+				<{foreach item = onefile from = $attached_pdf[i]}>
+					<td>
+						<iframe src="<{$onefile.file_downloadname}>#Toolbar=0&statusbar=0&navpanes=0&messages=0"  width="100%"  style="height: 15em">
+						</iframe>
+					</td>
+				<{/foreach}>
+			</tr>
+		<{/section}>
+	</table>
+<{/if}>
 
 <{if $pagenav}><div style="text-align: left; margin: 10px;"><{$smarty.const._MA_NW_PAGE}> <{$pagenav}></div><{/if}>
 
@@ -69,7 +99,8 @@
 <{if $attached_files_count > 0}>
 	<div class="itemInfo"><{$lang_attached_files}>
 		<{foreach item=onefile from=$attached_files}>
-			<a href="<{$onefile.visitlink}>" target='_blank'><{$onefile.file_mimetype}><{$onefile.file_realname}></a>&nbsp;
+			<!--<a href="<{$onefile.visitlink}>" target='_blank'><{$onefile.file_realname}></a>&nbsp;-->
+			<a href="<{$onefile.visitlink}>" target='_blank'><{$onefile.file_realname}></a><br />
 		<{/foreach}>
 	</div>
 <{/if}>

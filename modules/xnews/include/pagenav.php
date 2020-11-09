@@ -72,7 +72,8 @@ class XoopsPageNav
 		if ( $extra_arg != '' && ( substr($extra_arg, -5) != '&amp;' || substr($extra_arg, -1) != '&' ) ) {
 			$extra_arg .= '&amp;';
 		}
-		$this->url = $_SERVER['PHP_SELF'].'?'.$extra_arg.trim($start_name).'=';
+		//DNPROSSI - Sanitized
+		$this->url = filter_var($_SERVER['PHP_SELF'], FILTER_SANITIZE_STRING).'?'.$extra_arg.trim($start_name).'=';
 	}
 
 	/**

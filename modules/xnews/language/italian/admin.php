@@ -1,13 +1,5 @@
 <?php
-// $Id: admin.php,v 1.6 2006/09/20 03:33:17 w4z004 Exp $
-
-// ------------------------------------------------------------------------- //
-//       Italian Translation by Marco Ragogna (marco@6b6.net)                //
-//       Updated Translation by Alessandro Ricci (aricci@armordolls.it)	     //
-//            of XOOPS :: Italian Corner  (www.xoops.6b6.net)                //
-//              the XOOPS Official Italian Site                              //
-// ------------------------------------------------------------------------- //
-
+// $Id: admin.php,v 1.70 2010/09/01 17:48:07 dnprossi Exp $
 //%%%%%%	Admin Module Name  Articles 	%%%%%
 define("_AM_NW_DBUPDATED", "Database aggiornato con successo!");
 define("_AM_NW_CONFIG", "Amministrazione Notizie");
@@ -229,13 +221,13 @@ define("_AM_NW_CLONER_IMPORTNEWS", "Importare dati del modulo News originale");
 define("_AM_NW_CLONER_IMPORTNEWSDESC1", "Il modulo News originale esiste! Importare i dati ora?");
 define("_AM_NW_CLONER_IMPORTNEWSDESC2", "Il bottone di importazione appare solo se la tabella stories è vuota. <br />
                                          Se è stata aggiunto una notizia prima di importare dal modulo news originale <br /> 
-                                         si dovrà disinstallare e reinstallare xNews. <br />
+                                         si dovrà disinstallare e reinstallare x"."News. <br />
                                          Se sono già stati importati i dati dal mosulo originale News, lasciare così.");
 define("_AM_NW_CLONER_IMPORTNEWSSUB", "Importa");
 define("_AM_NW_CLONER_NEWSIMPORTED", "Dati modulo News originale importati correttamente");
 
 // Added in version 1.68 Beta
-define("_AM_NW_DESCRIPTION", "<H3>xNews e un modulo delle notizie clonabile</H3> 
+define("_AM_NW_DESCRIPTION", "<H3>x"."News e un modulo delle notizie clonabile</H3> 
 							  dove gli utenti possono inviare notizie/commenti. Il modulo può essere clonato per avere un unico metodo per diversi compiti. Oltre che per le normali notizie il modulo può essere utilizzato per info, collegamenti e altro ancora, tutti coi propri blocchi, argomenti e impostazioni.");
 
 // Added in version 1.68 RC1
@@ -246,4 +238,12 @@ define("_AM_NW_CLONER_UPGRADEFORCE", "Forza aggiornamento");
 define("_AM_NW_CLONER_CLONEDELETION", "Cancellazione Clone");
 define("_AM_NW_CLONER_SUREDELETE", "Sicuri di voler cancellare il clone <font color='#000000'>'%s'</font>?<br />");
 define("_AM_NW_CLONER_CLONEID", "L'ID del clone non trovato!"); 
+
+// Added in version 1.68 RC2
+define("_AM_NW_INDEX", "Indice"); 
+
+// Added in version 1.68 Final
+define("_AM_NW_DOLINEBREAK", "Abilita Fine Riga"); 
+
+define("_AM_NW_TOPICS","Argomenti");
 ?>

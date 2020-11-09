@@ -3,7 +3,7 @@
 // Module Info
 
 // The name of this module
-define("_MI_NW_NAME", "xNews");
+define("_MI_NW_NAME", "x"."News");
 
 // A brief description of this module
 define("_MI_NW_DESC", "Creates a Slashdot-like news section, where users can post news/comments.");
@@ -209,4 +209,22 @@ define("_MI_NW_SEOLEVEL", "SEO level ");
 define("_MI_NW_SEOLEVELDESC", "Here you can chose whether to have htaccess in xoops root dir or in module one. <br /> This will change the appearance of the url. <br /> In root level: <br /> http://your.site.com/news/topics.1/your-topic-title.html <br /> In module level: <br /> http://your.site.com/modules/xnews/news.topics.1/your-topic-title.html<br /><br /> Only works in htaccess mode and htaccess files will have to be installed accordingly.");
 define("_MI_NW_MODULE_LEVEL", "Module level");
 define("_MI_NW_ROOT_LEVEL", "Root level");
+
+//ADDED wishcraft 1.68
+define("_MI_NW_SEOENDOFURL", "End of URL");
+define("_MI_NW_SEOENDOFURL_DESC", "File Extension to HTML Files");
+define("_MI_NW_SEOENDOFURLRSS", "End of URL");
+define("_MI_NW_SEOENDOFURLRSS_DESC", "File Extension to RSS Pages");
+define("_MI_NW_SEOENDOFURLPDF", "End of URL");
+define("_MI_NW_SEOENDOFURLPDF_DESC", "File Extension to Adobe Acrobat (PDF) Files");
+
+//ADDED in version 1.71
+define("_MI_NW_PDF_DISPLAY", "Display attached PDF");
+define("_MI_NW_PDF_DISPLAY_DESC", "If enabled attached pdf files will be displayed in the article page.");
+define("_MI_NW_PDF_DETECT", "Actvate PDF plugin detection");
+define("_MI_NW_PDF_DETECT_DESC", "If enabled this will affect client side browser not to show <br />  PDF iframes if PDF browser plugin is not installed. <br /> Works together with Display attached PDF.");
+define("_MI_NW_IMAGES_DISPLAY", "Display attached images");
+define("_MI_NW_IMAGES_DISPLAY_DESC", "If enabled attached images will be displayed in the article page.");
+define("_MI_NW_THUMB_MAX_WIDTH", "Maximum attached image thumb width when it is resized");
+define("_MI_NW_THUMB_MAX_HEIGHT", "Maximum attached image thumb height when it is resized");
 ?>

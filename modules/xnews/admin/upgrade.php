@@ -64,7 +64,7 @@ if (is_object($xoopsUser) && $xoopsUser->isAdmin($xoopsModule->mid())) {
   			counter int(8) unsigned NOT NULL default '0',
   			PRIMARY KEY  (fileid),
   			KEY storyid (storyid)
-			) TYPE=MyISAM;";
+			) ENGINE=MyISAM;";
 		if (!$xoopsDB->queryF($sql)) {
 	    	echo '<br />' . _AM_NW_UPGRADEFAILED.' '._AM_NW_UPGRADEFAILED1;
 	    	$errors++;
@@ -93,7 +93,10 @@ if (is_object($xoopsUser) && $xoopsUser->isAdmin($xoopsModule->mid())) {
 		nw_AddField("topic_description TEXT NOT NULL",$xoopsDB->prefix('nw_topics'));
 	}
 	if (!nw_FieldExists('topic_color',$xoopsDB->prefix('nw_topics'))) {
-		nw_AddField("topic_color varchar(6) NOT NULL default '000000'",$xoopsDB->prefix('nw_topics'));
+		nw_AddField("topic_color varchar( 6 ) NOT NULL default '000000'",$xoopsDB->prefix('nw_topics'));
+	}
+	if (!nw_FieldExists('topic_weight',$xoopsDB->prefix('nw_topics'))) {
+		nw_AddField("topic_weight int( 11 ) NOT NULL default '0'",$xoopsDB->prefix('nw_topics'));
 	}
 
 	// 3) If it does not exists, create the table nw_stories_votedata
@@ -110,7 +113,7 @@ if (is_object($xoopsUser) && $xoopsUser->isAdmin($xoopsModule->mid())) {
   			KEY ratinguser (ratinguser),
   			KEY ratinghostname (ratinghostname),
   			KEY storyid (storyid)
-			) TYPE=MyISAM;";
+			) ENGINE=MyISAM;";
 		if (!$xoopsDB->queryF($sql)) {
 	    	echo '<br />' .  _AM_NW_UPGRADEFAILED.' '._AM_NW_UPGRADEFAILED3;
 	    	$errors++;
@@ -125,10 +128,22 @@ if (is_object($xoopsUser) && $xoopsUser->isAdmin($xoopsModule->mid())) {
 		nw_AddField("votes INT( 11 ) UNSIGNED DEFAULT '0' NOT NULL",$xoopsDB->prefix('nw_stories'));
 	}
 	if (!nw_FieldExists('keywords',$xoopsDB->prefix('nw_stories'))) {
-		nw_AddField("keywords VARCHAR(255) NOT NULL",$xoopsDB->prefix('nw_stories'));
+		nw_AddField("keywords VARCHAR( 255 ) NOT NULL",$xoopsDB->prefix('nw_stories'));
 	}
 	if (!nw_FieldExists('description',$xoopsDB->prefix('nw_stories'))) {
-		nw_AddField("description VARCHAR(255) NOT NULL",$xoopsDB->prefix('nw_stories'));
+		nw_AddField("description VARCHAR( 255 ) NOT NULL",$xoopsDB->prefix('nw_stories'));
+	}
+	if (!nw_FieldExists('dobr',$xoopsDB->prefix('nw_stories'))) {
+		nw_AddField("dobr TINYINT( 1 ) NOT NULL DEFAULT '1'",$xoopsDB->prefix('nw_stories'));
+	}
+	if (!nw_FieldExists('tags',$xoopsDB->prefix('nw_stories'))) {
+		nw_AddField("tags VARCHAR( 255 ) DEFAULT ''",$xoopsDB->prefix('nw_stories'));
+	}
+	if (!nw_FieldExists('imagerows',$xoopsDB->prefix('nw_stories'))) {
+		nw_AddField("imagerows SMALLINT(4) unsigned NOT NULL default '1'",$xoopsDB->prefix('nw_stories'));
+	}
+	if (!nw_FieldExists('pdfrows',$xoopsDB->prefix('nw_stories'))) {
+		nw_AddField("pdfrows SMALLINT(4) unsigned NOT NULL default '1'",$xoopsDB->prefix('nw_stories'));
 	}
 
 	// 5) Add some indexes to the topics table

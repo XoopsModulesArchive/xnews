@@ -24,7 +24,7 @@ if ( empty($seoOp) && @$_SERVER['PATH_INFO'] ) {
 		$seoArg = $seoParts[2];
 	}  
 	
-	// for multi-argument modules, where stroyid and storytopic both are required.
+	// for multi-argument modules, where stroyid and topic_id both are required.
 	// $seoArg = substr($data[1], strlen($seoOp) +1);
 }
 
@@ -32,7 +32,7 @@ $seoMap = array(
 		_MA_NW_SEO_TOPICS => 'index.php',
 		_MA_NW_SEO_ARTICLES => 'article.php',
 		_MA_NW_SEO_PRINT => 'print.php',
-		'pdf' => 'makepdf.php'
+		_MA_NW_SEO_PDF => 'makepdf.php'
 );
 
 if ( !empty($seoOp) && !empty($seoMap[$seoOp]) )
@@ -47,12 +47,12 @@ if ( !empty($seoOp) && !empty($seoMap[$seoOp]) )
 	$_SERVER['PHP_SELF'] = $newUrl;
 	switch ($seoOp) {
 		case _MA_NW_SEO_TOPICS:
-			$_SERVER['REQUEST_URI'] = $newUrl . '?storytopic=' . $seoArg;
-			$_GET['storytopic'] = $seoArg;
+			$_SERVER['REQUEST_URI'] = $newUrl . '?topic_id=' . $seoArg;
+			$_GET['topic_id'] = $seoArg;
 			break;
 		case _MA_NW_SEO_ARTICLES:
 		case _MA_NW_SEO_PRINT:
-		case 'pdf':
+		case _MA_NW_SEO_PDF:
 		default:
 			$_SERVER['REQUEST_URI'] = $newUrl . '?storyid=' . $seoArg;
 			$_GET['storyid'] = $seoArg;

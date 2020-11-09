@@ -1,15 +1,5 @@
 <?php
-// $Id: admin.php,v 1.6 2006/09/20 03:33:17 w4z004 Exp $
-
-// ------------------------------------------------------------------------- //
-//       Italian Translation by Marco Ragogna (marco@6b6.net)                //
-//       Updated Translation by Alessandro Ricci (aricci@armordolls.it)	     //
-//            of XOOPS :: Italian Corner  (www.xoops.6b6.net)                //
-//              the XOOPS Official Italian Site                              //
-// ------------------------------------------------------------------------- //
-//       Updated Translation by DNPROSSI									 //
-
-//%%%%%%	Admin Module Name  Articles 	%%%%%
+// $Id: blocks.php,v 1.70 2010/09/01 17:48:07 dnprossi Exp $								 //
 define("_MB_NW_NOTYET", "Non c'è nessuna notizia del giorno, ancora.");
 define("_MB_NW_TMRSI", "La notizia più letta di oggi è:");
 define("_MB_NW_ORDER", "Ordine");

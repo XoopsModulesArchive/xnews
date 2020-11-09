@@ -28,6 +28,22 @@ if (!defined('XOOPS_ROOT_PATH')) {
 	die('XOOPS root path not defined');
 }
 
+/**
+ * Solves issue when upgrading xoops version
+ * Paths not set and block would not work
+*/
+if (!defined('NW_MODULE_PATH')) {
+	define("NW_SUBPREFIX", "nw");
+	define("NW_MODULE_DIR_NAME", "xnews");
+	define("NW_MODULE_PATH", XOOPS_ROOT_PATH . "/modules/" . NW_MODULE_DIR_NAME);
+	define("NW_MODULE_URL", XOOPS_URL . "/modules/" . NW_MODULE_DIR_NAME);
+	define("NW_UPLOADS_NEWS_PATH", XOOPS_ROOT_PATH . "/uploads/" . NW_MODULE_DIR_NAME);
+	define("NW_TOPICS_FILES_PATH", XOOPS_ROOT_PATH . "/uploads/" . NW_MODULE_DIR_NAME . "/topics");
+	define("NW_ATTACHED_FILES_PATH", XOOPS_ROOT_PATH . "/uploads/" . NW_MODULE_DIR_NAME . "/attached");
+	define("NW_TOPICS_FILES_URL", XOOPS_URL . "/uploads/" . NW_MODULE_DIR_NAME . "/topics");
+	define("NW_ATTACHED_FILES_URL", XOOPS_URL . "/uploads/" . NW_MODULE_DIR_NAME . "/attached");
+}
+
 include_once NW_MODULE_PATH . '/class/class.newsstory.php';
 
 function nw_b_news_randomnews_show($options) {
@@ -35,7 +51,13 @@ function nw_b_news_randomnews_show($options) {
     $myts =& MyTextSanitizer::getInstance();
     $block = array();
 	$block['sort']=$options[0];
-
+	
+	//DNPROSSI Added - xlanguage installed and active 
+	$module_handler =& xoops_gethandler('module');
+	$xlanguage = $module_handler->getByDirname('xlanguage');
+	if ( is_object($xlanguage) && $xlanguage->getVar('isactive') == true ) 
+	{ $xlang = true; } else { $xlang = false; } 
+	
 	$tmpstory = new nw_NewsStory;
 	$restricted = nw_getmoduleoption('restrictindex', NW_MODULE_DIR_NAME);
 	$dateformat = nw_getmoduleoption('dateformat', NW_MODULE_DIR_NAME);
@@ -57,6 +79,15 @@ function nw_b_news_randomnews_show($options) {
         $news = array();
         $title = $story->title();
 		if (strlen($title) > $options[2]) {
+			//DNPROSSI Added - xlanguage installed and active 
+			$title = $thisstory->hometext;
+		
+			if ( $xlang == true )
+			{ 
+				include_once XOOPS_ROOT_PATH.'/modules/xlanguage/include/functions.php';
+				$title = xlanguage_ml($title); 
+			} 
+			
 			//DNPROSSI changed xoops_substr to mb_substr for utf-8 support
 			$title = mb_substr($title,0,$options[2]+3, 'UTF-8');
 		}
@@ -72,7 +103,9 @@ function nw_b_news_randomnews_show($options) {
 
         if ($options[3] > 0) {
         	$html = $story->nohtml() == 1 ? 0 : 1;
-        	$news['teaser'] = nw_truncate_tagsafe($myts->displayTarea($story->hometext, $html), $options[3]+3);
+        	//$news['teaser'] = nw_truncate_tagsafe($myts->displayTarea($story->hometext, $html), $options[3]+3);
+        	//DNPROSSI New truncate function - now works correctly with html and utf-8
+			$news['teaser'] = nw_truncate($story->hometext(), $options[3]+3, '...', true, $html);
         	$news['infotips'] = '';
         }
         else {

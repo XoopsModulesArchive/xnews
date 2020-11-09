@@ -34,6 +34,9 @@ if (!defined('XOOPS_ROOT_PATH')){ exit(); }
 
 if (!defined('K_TCPDF_EXTERNAL_CONFIG')) {
 	
+	include "../../mainfile.php";  // added for xoops 
+    include_once XOOPS_ROOT_PATH.'/include/functions.php'; // added for xoops 
+	
 	// DOCUMENT_ROOT fix for IIS Webserver
 	if ((!isset($_SERVER['DOCUMENT_ROOT'])) OR (empty($_SERVER['DOCUMENT_ROOT']))) {
 		if(isset($_SERVER['SCRIPT_FILENAME'])) {
@@ -87,22 +90,22 @@ if (!defined('K_TCPDF_EXTERNAL_CONFIG')) {
 	/**
 	 * cache directory for temporary files (full path)
 	 */
-	define ('K_PATH_CACHE', K_PATH_MAIN.'cache/');
+	define ('K_PATH_CACHE', XOOPS_VAR_PATH.'caches/smarty_compile/');
 	
 	/**
 	 * cache directory for temporary files (url path)
 	 */
-	define ('K_PATH_URL_CACHE', K_PATH_URL.'cache/');
+	define ('K_PATH_URL_CACHE', XOOPS_VAR_PATH.'caches/smarty_compile/');
 	
 	/**
 	 *images directory
 	 */
-	define ('K_PATH_IMAGES', K_PATH_MAIN.'images/');
+	define ('K_PATH_IMAGES', XOOPS_ROOT_PATH .'/images/');
 	
 	/**
 	 * blank image
 	 */
-	define ('K_BLANK_IMAGE', K_PATH_IMAGES.'_blank.png');
+	define ('K_BLANK_IMAGE', XOOPS_ROOT_PATH.'/images/_blank.png');
 	
 	/**
 	 * page format
@@ -127,17 +130,17 @@ if (!defined('K_TCPDF_EXTERNAL_CONFIG')) {
 	/**
 	 * header title
 	 */
-	define ('PDF_HEADER_TITLE', 'TCPDF Example');
+	define ('PDF_HEADER_TITLE', $xoopsConfig['sitename']); 
 	
 	/**
 	 * header description string
 	 */
-	define ('PDF_HEADER_STRING', "by Nicola Asuni - Tecnick.com\nwww.tcpdf.org");
+	define ('PDF_HEADER_STRING', $xoopsConfig['slogan']); 
 	
 	/**
 	 * image logo
 	 */
-	define ('PDF_HEADER_LOGO', 'tcpdf_logo.jpg');
+	define ('PDF_HEADER_LOGO', 'logo.png'); 
 	
 	/**
 	 * header logo image width [mm]

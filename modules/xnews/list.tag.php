@@ -30,7 +30,7 @@
  * This page will display a list of articles which belong to a tag
  *
  * @package News
- * @author Hervé Thouzard of Instant Zero
+ * @author HervÃ© Thouzard of Instant Zero
  * @copyright (c) Instant Zero - http://www.instant-zero.com
  */
 require_once 'header.php';

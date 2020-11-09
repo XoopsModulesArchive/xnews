@@ -148,6 +148,10 @@ $pdf->SetKeywords($doc_keywords);
 $pdf->SetHeaderData(PDF_HEADER_LOGO, PDF_HEADER_LOGO_WIDTH, PDF_HEADER_TITLE, PDF_HEADER_STRING);
 //$pdf->SetHeaderData('', '', $firstLine, $secondLine);
 //$pdf->SetHeaderData('logo_example.png', '25', $firstLine, $secondLine);
+//$firstLine = 'Your Site Name';
+//$secondLine = 'Any thing you feel writing here';
+//$pdf->SetHeaderData('logo_file.png', '25', $firstLine, $secondLine);
+
 //UTF-8 char sample
 //$pdf->SetHeaderData(PDF_HEADER_LOGO, '25', 'Éèéàùìò', $multylang);//$article->title());
 

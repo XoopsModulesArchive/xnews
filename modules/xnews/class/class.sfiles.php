@@ -71,6 +71,7 @@ class nw_sFiles {
 		while($true)
 		{
 			$ipbits = explode(".", $_SERVER["REMOTE_ADDR"]);
+			
   			list($usec, $sec) = explode(" ",microtime());
 
 			$usec = (integer) ($usec * 65536);
@@ -156,7 +157,11 @@ class nw_sFiles {
 			return false;
 		}
 		if (file_exists($workdir."/".$this->downloadname)) {
-			unlink($workdir."/".$this->downloadname);
+			unlink($workdir . "/" . $this->downloadname);
+			//DNPROSSI - Added thumb deletion
+			if ( strstr($this->getMimetype(), 'image') ) {
+				unlink($workdir . "/thumb_" . $this->downloadname);
+			}
 		}
        	return true;
     }
@@ -298,7 +303,6 @@ class nw_sFiles {
        return $myrow['cnt'];
     }
 
-
     function getCountbyStories($stories)
     {
 		$ret=array();
@@ -312,6 +316,5 @@ class nw_sFiles {
        	}
        	return $ret;
     }
-
 }
 ?>

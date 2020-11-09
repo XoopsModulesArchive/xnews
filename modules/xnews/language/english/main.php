@@ -124,7 +124,9 @@ define("_MA_NW_POSTED", "Posted");
 define("_MA_NW_NO_COMMENT", "No comment");
 define("_MA_NW_METASIZE", "Sorry, you may not add more than '+len+' characters into the text area box you just completed.");
 
+// Added in version 1.68 RC3
 define("_MA_NW_SEO_TOPICS", "topics");
 define("_MA_NW_SEO_ARTICLES", "articles");
 define("_MA_NW_SEO_PRINT", "print");
+define("_MA_NW_SEO_PDF", "pdf");
 ?>

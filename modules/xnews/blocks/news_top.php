@@ -28,6 +28,22 @@ if (!defined('XOOPS_ROOT_PATH')) {
 	die('XOOPS root path not defined');
 }
 
+/**
+ * Solves issue when upgrading xoops version
+ * Paths not set and block would not work
+*/
+if (!defined('NW_MODULE_PATH')) {
+	define("NW_SUBPREFIX", "nw");
+	define("NW_MODULE_DIR_NAME", "xnews");
+	define("NW_MODULE_PATH", XOOPS_ROOT_PATH . "/modules/" . NW_MODULE_DIR_NAME);
+	define("NW_MODULE_URL", XOOPS_URL . "/modules/" . NW_MODULE_DIR_NAME);
+	define("NW_UPLOADS_NEWS_PATH", XOOPS_ROOT_PATH . "/uploads/" . NW_MODULE_DIR_NAME);
+	define("NW_TOPICS_FILES_PATH", XOOPS_ROOT_PATH . "/uploads/" . NW_MODULE_DIR_NAME . "/topics");
+	define("NW_ATTACHED_FILES_PATH", XOOPS_ROOT_PATH . "/uploads/" . NW_MODULE_DIR_NAME . "/attached");
+	define("NW_TOPICS_FILES_URL", XOOPS_URL . "/uploads/" . NW_MODULE_DIR_NAME . "/topics");
+	define("NW_ATTACHED_FILES_URL", XOOPS_URL . "/uploads/" . NW_MODULE_DIR_NAME . "/attached");
+}
+
 include_once NW_MODULE_PATH . '/class/class.newsstory.php';
 include_once NW_MODULE_PATH . '/class/class.newstopic.php';
 
@@ -62,6 +78,12 @@ function nw_b_news_top_show($options) {
 	
 	//DNPROSSI ADDED
 	$block['newsmodule_url']= NW_MODULE_URL;
+
+	//DNPROSSI Added - xlanguage installed and active 
+	$module_handler =& xoops_gethandler('module');
+	$xlanguage = $module_handler->getByDirname('xlanguage');
+	if ( is_object($xlanguage) && $xlanguage->getVar('isactive') == true ) 
+	{ $xlang = true; } else { $xlang = false; }  
 
 	$restricted=nw_getmoduleoption('restrictindex', NW_MODULE_DIR_NAME);
 	$dateformat=nw_getmoduleoption('dateformat', NW_MODULE_DIR_NAME);
@@ -108,8 +130,8 @@ function nw_b_news_top_show($options) {
 		$defcolors[6]=array('#F90','#FFFFFF','#FFF','#DDD','#999');		// Plain
 		$defcolors[7]=array('#F90','#FFFFFF','','','');					// Rounded
 		$defcolors[8]=array('#F90','#FFFFFF','#F90','#930','#C60');		// ZDnet
-
-		$myurl=$_SERVER['PHP_SELF'];
+		//DNPROSSI - Sanitized
+		$myurl=filter_var($_SERVER['PHP_SELF'], FILTER_SANITIZE_STRING);
 		if(substr($myurl,strlen($myurl)-1,1) == '/') {
 			$myurl.='index.php';
 		}
@@ -120,7 +142,7 @@ function nw_b_news_top_show($options) {
 				$myurl.=$key.'='.$value.'&';
 			}
 		}
-		$block['url']=$myurl;
+		$block['url']=$myts->htmlSpecialChars($myurl);
 
 		$tabscount=0;
 		$usespotlight=false;
@@ -268,7 +290,14 @@ function nw_b_news_top_show($options) {
    				foreach ($stories as $key => $story) {
 					$news = array();
 	    			$title = $story->title();
-					if (strlen($title) > $options[2]) {
+					if (strlen($title) > $options[2]) 
+					{
+						//DNPROSSI Added - xlanguage installed and active 
+						if ( $xlang == true )
+						{ 
+							include_once XOOPS_ROOT_PATH.'/modules/xlanguage/include/functions.php';
+							$title = xlanguage_ml($title); 
+						}  	
 						//DNPROSSI changed xoops_substr to mb_substr for utf-8 support
 						$title = mb_substr($title,0,$options[2]+3, 'UTF-8');
 					}
@@ -288,7 +317,9 @@ function nw_b_news_top_show($options) {
            			}
             		if ($options[3] > 0) {
             			$html = $story->nohtml() == 1 ? 0 : 1;
-		        		$news['teaser'] = nw_truncate_tagsafe($myts->displayTarea($story->hometext(), $html), $options[3]+3);
+		        		//$news['teaser'] = nw_truncate_tagsafe($myts->displayTarea($story->hometext(), $html), $options[3]+3);
+						//DNPROSSI New truncate function - now works correctly with html and utf-8
+						$news['teaser'] = nw_truncate($story->hometext(), $options[3]+3, '...', true, $html);
            			} else {
 			        	$news['teaser'] = '';
            			}
@@ -317,7 +348,7 @@ function nw_b_news_top_show($options) {
 
     			$smallheader=array();
     			$stats=$topic->getTopicMiniStats($thetopic);
-    			$smallheader[]=sprintf("<a href='%s'>%s</a>", NW_MODULE_URL . '/index.php?storytopic='.$thetopic,_MB_NW_READMORE);
+    			$smallheader[]=sprintf("<a href='%s'>%s</a>", NW_MODULE_URL . '/index.php?topic_id='.$thetopic,_MB_NW_READMORE);
     			$smallheader[]=sprintf("%u %s",$stats['count'],_MA_NW_ARTICLES);
     			$smallheader[]=sprintf("%u %s",$stats['reads'],_READS);
 				if(count($stories)>0) {
@@ -325,14 +356,18 @@ function nw_b_news_top_show($options) {
 				        $news = array();
 		        		$title = $story->title();
 						if (strlen($title) > $options[2]) {
-							$title = nw_truncate_tagsafe($title, $options[2]+3);
+							//$title = nw_truncate_tagsafe($title, $options[2]+3);
+							//DNPROSSI New truncate function - now works correctly with html and utf-8
+							$title = nw_truncate($title, $options[2]+3, '...', true, $html);
 						}
             			if ($options[7] != '') {
 			                $news['image'] = sprintf("<a href='%s'>%s</a>", NW_MODULE_URL . '/article.php?storyid='.$story->storyid(),$myts->displayTarea($options[7], $story->nohtml));
             			}
                 		if($options[3]>0) {
 		                	$html = $story->nohtml() == 1 ? 0 : 1;
-		                	$news['text'] = nw_truncate_tagsafe($myts->displayTarea($story->hometext(), $html), $options[3]+3);
+		                	//$news['text'] = nw_truncate_tagsafe($myts->displayTarea($story->hometext(), $html), $options[3]+3);
+		                	//DNPROSSI New truncate function - now works correctly with html and utf-8
+							$news['teaser'] = nw_truncate($story->hometext(), $options[3]+3, '...', true, $html);
                 		} else {
 							$news['text'] = '';
                 		}
@@ -411,6 +446,13 @@ function nw_b_news_top_show($options) {
         	$news = array();
         	$title = $story->title();
 			if (strlen($title) > $options[2]) {
+				//DNPROSSI Added - xlanguage installed and active 
+				if ( $xlang == true )
+				{ 
+					include_once XOOPS_ROOT_PATH.'/modules/xlanguage/include/functions.php';
+					$title = xlanguage_ml($title); 
+				}  	
+				
 				//DNPROSSI changed xoops_substr to mb_substr for utf-8 support
 				$title = mb_substr($title,0,$options[2]+3, 'UTF-8');
 				$title .= '...';
@@ -481,7 +523,9 @@ function nw_b_news_top_show($options) {
             	}
             	if ($options[3] > 0) {
 	                $html = $story->nohtml() == 1 ? 0 : 1;
-	                $news['teaser'] = nw_truncate_tagsafe($myts->displayTarea($story->hometext(), $html), $options[3]+3);	                
+	                //$news['teaser'] = nw_truncate_tagsafe($myts->displayTarea($story->hometext(), $html), $options[3]+3);	                
+                	//DNPROSSI New truncate function - now works correctly with html and utf-8
+					$news['teaser'] = nw_truncate($story->hometext(), $options[3]+3, '...', true, $html);
                 	$news['infotips'] = '';
             	} else {
 	                $news['teaser'] = '';
@@ -526,8 +570,16 @@ function nw_b_news_top_show($options) {
 			}
             if($block['use_spotlight']==true) {
         		$spotlight = array();
+        		//DNPROSSI Added - xlanguage installed and active
+        		$spottitle = $spotlightArticle->title();
+        		if ( $xlang == true ) 
+        		{ 
+					include_once XOOPS_ROOT_PATH.'/modules/xlanguage/include/functions.php';
+					$spottitle = xlanguage_ml($spottitle);
+				}
         		//DNPROSSI changed xoops_substr to mb_substr for utf-8 support
-        		$spotlight['title'] = mb_substr($spotlightArticle->title(),0,($options[2]-1), 'UTF-8');;
+        		$spotlight['title'] = mb_substr($spottitle,0,($options[2]-1), 'UTF-8');
+        		
         		if ($options[7] != '') {
 		            $spotlight['image'] = sprintf("<a href='%s'>%s</a>", NW_MODULE_URL . '/article.php?storyid='.$spotlightArticle->storyid(),$myts->displayTarea($options[7], $spotlightArticle->nohtml));
         		}

@@ -90,8 +90,6 @@ function nw_updaterating($storyid)
 	$xoopsDB->queryF($sql);
 }
 
-
-
 /**
  * Internal function for permissions
  *
@@ -175,6 +173,18 @@ function nw_isX23()
 	return $x23;
 }
 
+/**
+ * version of xoops
+ *
+ * @return string
+ */
+function nw_xoops_version()
+{
+	$xv = '';
+	$xv = str_replace('XOOPS ','',XOOPS_VERSION);
+	$xv = substr($xv,0,3);
+	return $xv;
+}
 
 /**
  * Retreive an editor according to the module's option "form_options"
@@ -251,7 +261,7 @@ function nw_CreateMetaDatas($story = null)
 		$topic_tree = new XoopsObjectTree($allTopics, 'topic_id', 'topic_pid');
 		$topics_arr = $topic_tree->getAllChild(0);
 		foreach ($topics_arr as $onetopic) {
-			$content .= sprintf("<link rel=\"Chapter\" title=\"%s\" href=\"%s\" />\n",$onetopic->topic_title(),NW_MODULE_URL . '/index.php?storytopic='.$onetopic->topic_id());
+			$content .= sprintf("<link rel=\"Chapter\" title=\"%s\" href=\"%s\" />\n",$onetopic->topic_title(),NW_MODULE_URL . '/index.php?topic_id='.$onetopic->topic_id());
 		}
 	}
 
@@ -296,7 +306,7 @@ function nw_CreateMetaDatas($story = null)
 		$content .= '<meta name="DC.Identifier" content="'.NW_MODULE_URL . '/article.php?storyid='.$story->storyid()."\" />\n";
 		$content .= '<meta name="DC.Source" content="'.XOOPS_URL."\" />\n";
 		$content .= '<meta name="DC.Language" content="'._LANGCODE."\" />\n";
-		$content .= '<meta name="DC.Relation.isReferencedBy" content="'.NW_MODULE_URL . '/index.php?storytopic='.$story->topicid()."\" />\n";
+		$content .= '<meta name="DC.Relation.isReferencedBy" content="'.NW_MODULE_URL . '/index.php?topic_id='.$story->topicid()."\" />\n";
 		if(isset($xoopsConfigMetaFooter['meta_copyright'])) {
 			$content .= '<meta name="DC.Rights" content="'.nw_DublinQuotes($xoopsConfigMetaFooter['meta_copyright'])."\" />\n";
 		}
@@ -724,8 +734,8 @@ function nw_remove_accents($chain){
     
     // Transform punctuation
     //                 Tab     Space      !        "        #        %        &        '        (        )        ,        /        :        ;        <        =        >        ?        @        [        \        ]        ^        {        |        }        ~       .
-    $pattern = array("/%09/", "/%20/", "/%21/", "/%22/", "/%23/", "/%25/", "/%26/", "/%27/", "/%28/", "/%29/", "/%2C/", "/%2F/", "/%3A/", "/%3B/", "/%3C/", "/%3D/", "/%3E/", "/%3F/", "/%40/", "/%5B/", "/%5C/", "/%5D/", "/%5E/", "/%7B/", "/%7C/", "/%7D/", "/%7E/", "/\./");
-    $rep_pat = array(  "-"  ,   "-"  ,   ""   ,   ""   ,   ""   , "-100" ,   ""   ,   "-"  ,   ""   ,   ""   ,   ""   ,   "-"  ,   ""   ,   ""   ,   ""   ,   "-"  ,   ""   ,   ""   , "-at-" ,   ""   ,   "-"   ,  ""   ,   "-"  ,   ""   ,   "-"  ,   ""   ,   "-"  ,  ""  );
+    $pattern = array("/%09/", "/%20/", "/%21/", "/%22/", "/%23/", "/%25/", "/%26/", "/%27/", "/%28/", "/%29/", "/%2C/", "/%2F/", "/%3A/", "/%3B/", "/%3C/", "/%3D/", "/%3E/", "/%3F/", "/%40/", "/%5B/", "/%5C/", "/%5D/", "/%5E/", "/%7B/", "/%7C/", "/%7D/", "/%7E/", "/%39/","/\./");
+    $rep_pat = array(  "-"  ,   "-"  ,   ""   ,   ""   ,   ""   , "-100" ,   ""   ,   "-"  ,   ""   ,   ""   ,   ""   ,   "-"  ,   ""   ,   ""   ,   ""   ,   "-"  ,   ""   ,   ""   , "-at-" ,   ""   ,   "-"   ,  ""   ,   "-"  ,   ""   ,   "-"  ,   ""   ,   "-"  ,   "-"   , "" );
     $chain   = preg_replace($pattern, $rep_pat, $chain);
     
     return $chain;
@@ -735,22 +745,51 @@ function nw_seo_UrlGenerator($op, $id, $short_url = "")
 {
     if ( nw_getmoduleoption('seo_enable', NW_MODULE_DIR_NAME) != 0 )
     {
-    	if ( ! empty($short_url) ) $short_url = $short_url . '.html';
-
-        if ( nw_getmoduleoption('seo_enable', NW_MODULE_DIR_NAME) == 1 ) {
-            // generate SEO url using htaccess
+    	if ( !empty($short_url) ) $short_url = $short_url;
+		
+		switch($op) {
+			case _MA_NW_SEO_PDF:
+				$short_url .= nw_getmoduleoption('seo_endofurl_pdf', NW_MODULE_DIR_NAME);
+				break;
+			case _MA_NW_SEO_PRINT:
+				$short_url .= nw_getmoduleoption('seo_endofurl', NW_MODULE_DIR_NAME);
+				break;
+			case _MA_NW_SEO_ARTICLES:
+				$short_url .= nw_getmoduleoption('seo_endofurl', NW_MODULE_DIR_NAME);
+				break;
+			case _MA_NW_SEO_TOPICS:
+				$short_url .= nw_getmoduleoption('seo_endofurl', NW_MODULE_DIR_NAME);
+				break;
+		}
+        if ( nw_getmoduleoption('seo_enable', NW_MODULE_DIR_NAME) == 1 ) 
+        {   
+			// generate SEO url using htaccess
             $seo_path = "";
             if ( nw_getmoduleoption('seo_path', NW_MODULE_DIR_NAME) != '' ) {
+				// generate SEO url using seo path eg news, info, blog
 				$seo_path = "/" . strtolower(nw_getmoduleoption('seo_path', NW_MODULE_DIR_NAME)); 
-			}
-			if ( nw_getmoduleoption('seo_level', NW_MODULE_DIR_NAME) == 0 ) {
-				$seo_path .= "/";
-				return XOOPS_URL . $seo_path . "${op}.${id}/${short_url}"; 
+				if ( nw_getmoduleoption('seo_level', NW_MODULE_DIR_NAME) == 0 ) 
+				{
+					// generate SEO url using root level htaccess
+					$seo_path .= ".";
+					return XOOPS_URL . "/" . NW_MODULE_DIR_NAME . $seo_path . "${op}.${id}/${short_url}"; 
+				} else {
+					// generate SEO url using module level htaccess
+					$seo_path .= ".";
+					return NW_MODULE_URL . $seo_path . "${op}.${id}/${short_url}"; 
+				}
 			} else {
-				$seo_path .= ".";
-				return NW_MODULE_URL . $seo_path . "${op}.${id}/${short_url}"; 
-			}
-            
+				// generate SEO url with no seo path
+				$seo_path = "/" . strtolower(nw_getmoduleoption('seo_path', NW_MODULE_DIR_NAME));
+				if ( nw_getmoduleoption('seo_level', NW_MODULE_DIR_NAME) == 0 ) 
+				{
+					// generate SEO url using root level htaccess
+					return XOOPS_URL . "/" . NW_MODULE_DIR_NAME . $seo_path . "${op}.${id}/${short_url}"; 
+				} else {
+					// generate SEO url using module level htaccess
+					return NW_MODULE_URL . $seo_path . "${op}.${id}/${short_url}"; 
+				}
+			}   
         } else if ( nw_getmoduleoption('seo_enable', NW_MODULE_DIR_NAME) == 2 ) {
             // generate SEO url using path-info
             $seo_path = "";
@@ -765,12 +804,12 @@ function nw_seo_UrlGenerator($op, $id, $short_url = "")
         // generate classic url
         switch ($op) {
             case _MA_NW_SEO_TOPICS:
-               return NW_MODULE_URL . "/index.php?storytopic=${id}";
+               return NW_MODULE_URL . "/index.php?topic_id=${id}";
             case _MA_NW_SEO_ARTICLES:
                return NW_MODULE_URL . "/article.php?storyid=${id}";
             case _MA_NW_SEO_PRINT:
                return NW_MODULE_URL . "/print.php?storyid=${id}";
-            case 'pdf':
+            case _MA_NW_SEO_PDF:
                return NW_MODULE_URL . "/makepdf.php?storyid=${id}";
             default:
                 die('Unknown SEO operation.');
@@ -820,5 +859,132 @@ function nw_detect_utf8_lang_encoding($string)
             } 
 		}	
 	}
+}
+
+//DNPROSSI Added
+//@param string $text String to truncate.
+//@param integer $length Length of returned string, including ellipsis.
+//@param string $ending Ending to be appended to the trimmed string.
+//@param boolean $exact If false, $text will not be cut mid-word
+//@param boolean $considerHtml If true, HTML tags would be handled correctly
+//@return string Trimmed string.
+function nw_truncate($text, $length = 100, $ending = '...', $exact = false, $considerHtml = true) {
+	if ($considerHtml) {
+		// if the plain text is shorter than the maximum length, return the whole text
+		if (strlen(preg_replace('/<.*?>/', '', $text)) <= $length) {
+			return $text;
+		}
+		// splits all html-tags to scanable lines
+		preg_match_all('/(<.+?>)?([^<>]*)/s', $text, $lines, PREG_SET_ORDER);
+		$total_length = strlen($ending);
+		$open_tags = array();
+		$truncate = '';
+		foreach ($lines as $line_matchings) {
+			// if there is any html-tag in this line, handle it and add it (uncounted) to the output
+			if (!empty($line_matchings[1])) {
+				// if it's an "empty element" with or without xhtml-conform closing slash
+				if (preg_match('/^<(\s*.+?\/\s*|\s*(img|br|input|hr|area|base|basefont|col|frame|isindex|link|meta|param)(\s.+?)?)>$/is', $line_matchings[1])) {
+					// do nothing
+				// if tag is a closing tag
+				} else if (preg_match('/^<\s*\/([^\s]+?)\s*>$/s', $line_matchings[1], $tag_matchings)) {
+					// delete tag from $open_tags list
+					$pos = array_search($tag_matchings[1], $open_tags);
+					if ($pos !== false) {
+					unset($open_tags[$pos]);
+					}
+				// if tag is an opening tag
+				} else if (preg_match('/^<\s*([^\s>!]+).*?>$/s', $line_matchings[1], $tag_matchings)) {
+					// add tag to the beginning of $open_tags list
+					array_unshift($open_tags, strtolower($tag_matchings[1]));
+				}
+				// add html-tag to $truncate'd text
+				$truncate .= $line_matchings[1];
+			}
+			// calculate the length of the plain text part of the line; handle entities as one character
+			$content_length = strlen(preg_replace('/&[0-9a-z]{2,8};|&#[0-9]{1,7};|[0-9a-f]{1,6};/i', ' ', $line_matchings[2]));
+			if ($total_length+$content_length> $length) {
+				// the number of characters which are left
+				$left = $length - $total_length;
+				$entities_length = 0;
+				// search for html entities
+				if (preg_match_all('/&[0-9a-z]{2,8};|&#[0-9]{1,7};|[0-9a-f]{1,6};/i', $line_matchings[2], $entities, PREG_OFFSET_CAPTURE)) {
+					// calculate the real length of all entities in the legal range
+					foreach ($entities[0] as $entity) {
+						if ($entity[1]+1-$entities_length <= $left) {
+							$left--;
+							$entities_length += strlen($entity[0]);
+						} else {
+							// no more characters left
+							break;
+						}
+					}
+				}
+				$truncate .= mb_substr($line_matchings[2], 0, $left+$entities_length, 'UTF-8');
+				// maximum lenght is reached, so get off the loop
+				break;
+			} else {
+				$truncate .= $line_matchings[2];
+				$total_length += $content_length;
+			}
+			// if the maximum length is reached, get off the loop
+			if($total_length>= $length) {
+				break;
+			}
+		}
+	} else {
+		if (strlen($text) <= $length) {
+			return $text;
+		} else {
+			$truncate = mb_substr($text, 0, $length - strlen($ending), 'UTF-8');
+		}
+	}
+	// if the words shouldn't be cut in the middle...
+	if (!$exact) {
+		// ...search the last occurance of a space...
+		$spacepos = strrpos($truncate, ' ');
+		if (isset($spacepos)) {
+			// ...and cut the text in this position
+			$truncate = mb_substr($truncate, 0, $spacepos, 'UTF-8');
+		}
+	}
+	// add the defined ending to the text
+	$truncate .= $ending;
+	if($considerHtml) {
+		// close all unclosed html-tags
+		foreach ($open_tags as $tag) {
+			$truncate .= '</' . $tag . '>';
+		}
+	}
+	return $truncate;
+}
+
+//DNPROSSI - Added 1.71
+//Use Javascript to detect adobe pdf plugin used to view 
+//attached pdf in articles view
+function nw_detect_adobe()
+{
+	$has_adobe = '';
+	nw_callJavascriptFile('pdfobject.js');
+	echo '<script type="text/javascript">
+			var plugin = pipwerks.pdfUTILS.detect.pluginFound();
+		    if ( plugin == "Adobe" ) 
+		    { var has_adobe = 1; }
+			else
+			{ var has_adobe = 0; } 
+		    var today = new Date();
+			var the_date = new Date("December 31, 2099");
+			var the_cookie_date = the_date.toGMTString();
+			var the_cookie = "xnews=" + has_adobe;
+			var the_cookie = the_cookie + ";expires=" + the_cookie_date;
+			document.cookie=the_cookie
+		</script>';
+
+	if ( isset($_COOKIE["xnews"]) ) 
+	{
+		$has_adobe = $_COOKIE["xnews"];
+		//Delete cookie
+		setcookie("xnews","",time()-3600); 	
+	}
+	return $has_adobe;
 }
 ?>

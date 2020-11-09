@@ -107,7 +107,7 @@ function adminmenu($currentoption = 0, $breadcrumb = '')
 
 		echo "<div id='buttontop'>";
 		echo "<table style=\"width: 100%; padding: 0; \" cellspacing=\"0\"><tr>";
-		echo "<td style=\"width: 60%; font-size: 10px; text-align: left; color: #2F5376; padding: 0 6px; line-height: 18px;\"><a class=\"nobutton\" href=\"".XOOPS_URL."/modules/system/admin.php?fct=preferences&amp;op=showmod&amp;mod=".$xoopsModule->getVar('mid')."\">" . _AM_NW_GENERALSET . "</a> | <a href=\"../index.php\">" . _AM_NW_GOTOMOD . "</a> | <a href=\"#\">" . _AM_NW_HELP . "</a> | <a href='index.php?op=verifydb'>". _AM_NW_VERIFY_TABLES ."</a></td>";
+		echo "<td style=\"width: 60%; font-size: 10px; text-align: left; color: #2F5376; padding: 0 6px; line-height: 18px;\"><a href=\"index.php\">" . _AM_NW_INDEX . "</a> | <a class=\"nobutton\" href=\"".XOOPS_URL."/modules/system/admin.php?fct=preferences&amp;op=showmod&amp;mod=".$xoopsModule->getVar('mid')."\">" . _AM_NW_GENERALSET . "</a> | <a href=\"../index.php\">" . _AM_NW_GOTOMOD . "</a> | <a href=\"#\">" . _AM_NW_HELP . "</a> | <a href='index.php?op=verifydb'>". _AM_NW_VERIFY_TABLES ."</a></td>";
 		echo "<td style=\"width: 40%; font-size: 10px; text-align: right; color: #2F5376; padding: 0 6px; line-height: 18px;\"><b>" . $xoopsModule->name() . "  " . _AM_NW_MODULEADMIN . "</b> " . $breadcrumb . "</td>";
 		echo '</tr></table>';
 		echo '</div>';

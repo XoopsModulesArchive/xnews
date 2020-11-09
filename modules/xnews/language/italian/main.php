@@ -1,15 +1,5 @@
 <?php
-// $Id: main.php,v 1.6 2003/03/26 03:33:17 w4z004 Exp $
-
-// ------------------------------------------------------------------------- //
-//       Italian Translation by Marco Ragogna (marco@6b6.net)                //
-//                and Andrea Bandino (andrea@6b6.net)                        //
-//        webmasters of XOOPS :: Italian Corner  (www.xoops.6b6.net)         //
-//              the XOOPS Official Italian Site                              //
-//			and Alessandro Ricci (aricci@armordolls.it)						 //
-// ------------------------------------------------------------------------- //
-//       Updated Translation by DNPROSSI									 //
-
+// $Id: main.php,v 1.70 2010/09/01 17:48:07 dnprossi Exp $
 //%%%%%%		File Name index.php 		%%%%%
 define("_MA_NW_PRINTER", "Pagina stampabile");
 define("_MA_NW_SENDSTORY", "Invia questa notizia a un amico");
@@ -134,7 +124,9 @@ define("_MA_NW_POSTED", "Inviato");
 define("_MA_NW_NO_COMMENT", "Nessun Commento");
 define("_MA_NW_METASIZE", "Sorry, you may not add more than '+len+' characters into the text area box you just completed.");
 
+// Added in version 1.68 RC3
 define("_MA_NW_SEO_TOPICS", "argomenti");
 define("_MA_NW_SEO_ARTICLES", "articoli");
 define("_MA_NW_SEO_PRINT", "stampa");
+define("_MA_NW_SEO_PDF", "pdf");
 ?>

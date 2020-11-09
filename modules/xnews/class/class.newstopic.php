@@ -285,9 +285,9 @@ class nw_NewsTopic extends XoopsTopic
 		if ( empty($this->topic_id) ) {
 			$insert=true;
 			$this->topic_id = $this->db->genId($this->table."_topic_id_seq");
-			$sql = sprintf("INSERT INTO %s (topic_id, topic_pid, topic_imgurl, topic_title, menu, topic_description, topic_frontpage, topic_rssurl, topic_color) VALUES (%u, %u, '%s', '%s', %u, '%s', %d, '%s', '%s')", $this->table, intval($this->topic_id), intval($this->topic_pid), $imgurl, $title, intval($this->menu), $topic_description, $topic_frontpage, $topic_rssurl, $topic_color);
+			$sql = sprintf("INSERT INTO %s (topic_id, topic_pid, topic_imgurl, topic_title, menu, topic_description, topic_frontpage, topic_rssurl, topic_color, topic_weight) VALUES (%u, %u, '%s', '%s', %u, '%s', %d, '%s', '%s', %u)", $this->table, intval($this->topic_id), intval($this->topic_pid), $imgurl, $title, intval($this->menu), $topic_description, $topic_frontpage, $topic_rssurl, $topic_color, intval($this->topic_weight));
 		} else {
-			$sql = sprintf("UPDATE %s SET topic_pid = %u, topic_imgurl = '%s', topic_title = '%s', menu=%d, topic_description='%s', topic_frontpage=%d, topic_rssurl='%s', topic_color='%s' WHERE topic_id = %u", $this->table, intval($this->topic_pid), $imgurl, $title, intval($this->menu), $topic_description, $topic_frontpage, $topic_rssurl,$topic_color, intval($this->topic_id));
+			$sql = sprintf("UPDATE %s SET topic_pid = %u, topic_imgurl = '%s', topic_title = '%s', menu=%d, topic_description='%s', topic_frontpage=%d, topic_rssurl='%s', topic_color='%s', topic_weight='%u' WHERE topic_id = %u", $this->table, intval($this->topic_pid), $imgurl, $title, intval($this->menu), $topic_description, $topic_frontpage, $topic_rssurl,$topic_color, intval($this->topic_weight), intval($this->topic_id));
 		}
 		if ( !$result = $this->db->query($sql) ) {
 			// TODO: Replace with something else

@@ -42,7 +42,9 @@ class nw_NewsStory extends XoopsStory
   	var $picture;
   	var $topic_imgurl;
   	var $topic_title;
-
+	var $tags;
+	//var $imagerows;
+	//var $pdfrows;
 
 	/**
  	* Constructor
@@ -58,7 +60,7 @@ class nw_NewsStory extends XoopsStory
 			$this->getStory(intval($storyid));
 		}
 	}
-
+	
 	/**
  	* Returns the number of stories published before a date
  	*/
@@ -233,7 +235,7 @@ class nw_NewsStory extends XoopsStory
 
 
 	/**
-	 * Retourne la liste des articles aux archives (pour une période donnée)
+	 * Retourne la liste des articles aux archives (pour une pÃ©riode donnÃ©e)
 	 */
 	function getArchive($publish_start, $publish_end, $checkRight=false, $asobject=true, $order = 'published')
 	{
@@ -368,10 +370,16 @@ class nw_NewsStory extends XoopsStory
 				} else {
 					$smiley = 1;
 				}
+				//DNPROSSI - dobr
+				if ( $myrow['dobr'] ) {
+					$dobr = 0;
+				} else {
+					$dobr = 1;
+				}
 				$ret[$myrow['storyid']] = array('title'=>$myts->displayTarea($myrow['title'],$html,$smiley,1),
 												'topicid'=>intval($myrow['topicid']),
 												'storyid'=>intval($myrow['storyid']),
-												'hometext'=>$myts->displayTarea($myrow['hometext'],$html,$smiley,1),
+												'hometext'=>$myts->displayTarea($myrow['hometext'],$html,$smiley,1,0,$dobr),
 												'counter'=>intval($myrow['counter']),
 												'created'=>intval($myrow['created']),
 												'topic_title'=>$myts->displayTarea($myrow['topic_title'],$html,$smiley,1),
@@ -676,6 +684,16 @@ class nw_NewsStory extends XoopsStory
 		return $ret;
 	}
 
+	function dobr()
+    {
+        return $this->dobr;
+    }
+    
+    function setDobr($value=0)
+    {
+        $this->dobr = $value;
+    }
+
 	function textlink()
 	{
 		$topic_display = nw_getmoduleoption('topicdisplay', NW_MODULE_DIR_NAME);
@@ -692,7 +710,7 @@ class nw_NewsStory extends XoopsStory
 	}
 
 	/**
-	 * Function used to prepare an article to be showned
+	 * Function used to prepare an article to be showed
 	 */
 	function prepare2show($filescount)
 	{
@@ -793,7 +811,7 @@ class nw_NewsStory extends XoopsStory
 		} else {
 			$story['infotips'] = '';
 		}
-	    
+		
 	    //DNPROSSI SEO
 	    $story_path = '';
 	    if ( $seo_enabled != 0 ) $story_path = nw_remove_accents($this->title());
@@ -915,6 +933,7 @@ class nw_NewsStory extends XoopsStory
 		$description =$myts->addSlashes($myts->censorString($this->description));
 		$keywords =$myts->addSlashes($myts->censorString($this->keywords));
 		$picture = $myts->addSlashes($this->picture);
+		$tags = $myts->addSlashes($this->tags);
 		$votes= intval($this->votes);
 		$rating = (float)($this->rating);
 		if (!isset($this->nohtml) || $this->nohtml != 1) {
@@ -922,6 +941,9 @@ class nw_NewsStory extends XoopsStory
 		}
 		if (!isset($this->nosmiley) || $this->nosmiley != 1) {
 			$this->nosmiley = 0;
+		}
+		if (!isset($this->dobr) || $this->dobr != 1) {
+			$this->dobr = 0;
 		}
 		if (!isset($this->notifypub) || $this->notifypub != 1) {
 			$this->notifypub = 0;
@@ -935,9 +957,10 @@ class nw_NewsStory extends XoopsStory
 			$newstoryid = $this->db->genId($this->table.'_storyid_seq');
 			$created = time();
 			$published = ( $this->approved ) ? intval($this->published) : 0;
-			$sql = sprintf("INSERT INTO %s (storyid, uid, title, created, published, expired, hostname, nohtml, nosmiley, hometext, bodytext, counter, topicid, ihome, notifypub, story_type, topicdisplay, topicalign, comments, rating, votes, description, keywords, picture) VALUES (%u, %u, '%s', %u, %u, %u, '%s', %u, %u, '%s', '%s', %u, %u, %u, %u, '%s', %u, '%s', %u, %u, %u, '%s', '%s', '%s')", $this->table, $newstoryid, intval($this->uid()), $title, $created, $published, $expired, $hostname, intval($this->nohtml()), intval($this->nosmiley()), $hometext, $bodytext, $counter, intval($this->topicid()), intval($this->ihome()), intval($this->notifypub()), $type, intval($this->topicdisplay()), $this->topicalign, intval($this->comments()), $rating, $votes, $description, $keywords, $picture);
+			//DNPROSSI - ADD TAGS FOR UPDATES - ADDED imagerows, pdfrows			
+			$sql = sprintf("INSERT INTO %s (storyid, uid, title, created, published, expired, hostname, nohtml, nosmiley, hometext, bodytext, counter, topicid, ihome, notifypub, story_type, topicdisplay, topicalign, comments, rating, votes, description, keywords, picture, dobr, tags, imagerows, pdfrows) VALUES (%u, %u, '%s', %u, %u, %u, '%s', %u, %u, '%s', '%s', %u, %u, %u, %u, '%s', %u, '%s', %u, %u, %u, '%s', '%s', '%s', '%u','%s', %u, %u)", $this->table, $newstoryid, intval($this->uid()), $title, $created, $published, $expired, $hostname, intval($this->nohtml()), intval($this->nosmiley()), $hometext, $bodytext, $counter, intval($this->topicid()), intval($this->ihome()), intval($this->notifypub()), $type, intval($this->topicdisplay()), $this->topicalign, intval($this->comments()), $rating, $votes, $description, $keywords, $picture, intval($this->dobr()), $tags, intval($this->imagerows()), intval($this->pdfrows()));
 		} else {
-			$sql = sprintf("UPDATE %s SET title='%s', published=%u, expired=%u, nohtml=%u, nosmiley=%u, hometext='%s', bodytext='%s', topicid=%u, ihome=%u, topicdisplay=%u, topicalign='%s', comments=%u, rating=%u, votes=%u, uid=%u, description='%s', keywords='%s', picture='%s' WHERE storyid = %u", $this->table, $title, intval($this->published()), $expired, intval($this->nohtml()), intval($this->nosmiley()), $hometext, $bodytext, intval($this->topicid()), intval($this->ihome()), intval($this->topicdisplay()), $this->topicalign, intval($this->comments()), $rating, $votes, intval($this->uid()), $description, $keywords, $picture, intval($this->storyid()));
+			$sql = sprintf("UPDATE %s SET title='%s', published=%u, expired=%u, nohtml=%u, nosmiley=%u, hometext='%s', bodytext='%s', topicid=%u, ihome=%u, topicdisplay=%u, topicalign='%s', comments=%u, rating=%u, votes=%u, uid=%u, description='%s', keywords='%s', picture='%s', dobr='%u', tags='%s', imagerows='%u', pdfrows='%u' WHERE storyid = %u", $this->table, $title, intval($this->published()), $expired, intval($this->nohtml()), intval($this->nosmiley()), $hometext, $bodytext, intval($this->topicid()), intval($this->ihome()), intval($this->topicdisplay()), $this->topicalign, intval($this->comments()), $rating, $votes, intval($this->uid()), $description, $keywords, $picture, intval($this->dobr()), $tags, intval($this->imagerows()), intval($this->pdfrows()), intval($this->storyid()));
 			$newstoryid = intval($this->storyid());
 		}
 		if (!$this->db->queryF($sql)) {
@@ -954,6 +977,28 @@ class nw_NewsStory extends XoopsStory
 	{
 		return $this->picture;
 	}
+	
+	//DNPROSSI - 1.71
+	function imagerows()
+	{ 
+		return $this->imagerows;
+	}
+	
+	function Setimagerows($imagerows)
+	{
+		$this->imagerows = $imagerows;
+	}
+	
+	//DNPROSSI - 1.71
+	function pdfrows()
+	{
+		return $this->pdfrows;
+	}
+	
+	function Setpdfrows($pdfrows)
+	{
+		$this->pdfrows = $pdfrows;
+	}
 
 	function rating()
 	{
@@ -964,7 +1009,17 @@ class nw_NewsStory extends XoopsStory
 	{
 		return $this->votes;
 	}
+	
+	function tags()
+	{
+		return $this->tags;
+	}
 
+	function Settags($tags)
+	{
+		$this->tags = $tags;
+	}
+	
 	function Setpicture($data)
 	{
 		$this->picture = $data;
@@ -1294,15 +1349,19 @@ class nw_NewsStory extends XoopsStory
 	{
 		$myts =& MyTextSanitizer::getInstance();
 		$html = $smiley = $xcodes = 1;
+		$dobr = 0;
 		if ( $this->nohtml() ) {
 			$html = 0;
 		}
 		if ( $this->nosmiley() ) {
 			$smiley = 0;
 		}
+		if ( $this->dobr() ) {
+			$dobr = 1;
+		}
 		switch ( $format ) {
 		case 'Show':
-			$hometext = $myts->displayTarea($this->hometext,$html,$smiley,$xcodes);
+			$hometext = $myts->displayTarea($this->hometext,$html,$smiley,1,1,$dobr);
 			$tmp = '';
 			$auto_summary = $this->auto_summary($this->bodytext('Show'),$tmp);
 			$hometext = str_replace('[summary]', $auto_summary, $hometext);
@@ -1311,7 +1370,7 @@ class nw_NewsStory extends XoopsStory
 			$hometext = $myts->htmlSpecialChars($this->hometext);
 			break;
 		case 'Preview':
-			$hometext = $myts->previewTarea($this->hometext,$html,$smiley,$xcodes);
+			$hometext = $myts->previewTarea($this->hometext,$html,$smiley,1,1,$dobr);
 			break;
 		case 'InForm':
 			$hometext = $myts->stripSlashesGPC($this->hometext);
@@ -1327,15 +1386,19 @@ class nw_NewsStory extends XoopsStory
 		$html = 1;
 		$smiley = 1;
 		$xcodes = 1;
+		$dobr = 0;
 		if ( $this->nohtml() ) {
 			$html = 0;
 		}
 		if ( $this->nosmiley() ) {
 			$smiley = 0;
 		}
+		if ( $this->dobr() ) {
+			$dobr = 1;
+		}
 		switch ( $format ) {
 		case 'Show':
-			$bodytext = $myts->displayTarea($this->bodytext,$html,$smiley,$xcodes);
+			$bodytext = $myts->displayTarea($this->bodytext,$html,$smiley,1,1,$dobr);
 			$tmp = '';
 			$auto_summary = $this->auto_summary($bodytext,$tmp);
 			$bodytext = str_replace('[summary]', $auto_summary, $bodytext);
@@ -1344,7 +1407,7 @@ class nw_NewsStory extends XoopsStory
 			$bodytext = $myts->htmlSpecialChars($this->bodytext);
 			break;
 		case 'Preview':
-			$bodytext = $myts->previewTarea($this->bodytext,$html,$smiley, $xcodes);
+			$bodytext = $myts->previewTarea($this->bodytext,$html,$smiley,1,1,$dobr);
 			break;
 		case 'InForm':
 			$bodytext = $myts->stripSlashesGPC($this->bodytext);
@@ -1394,5 +1457,34 @@ class nw_NewsStory extends XoopsStory
 		}
 		return $ret;
 	}
+	
+	//ADDED by wishcraft ver 1.89
+	function nw_stripeKey($xoops_key, $num = 7, $length = 32, $uu = 0)
+    {
+        $strip = floor(strlen($xoops_key) / $num);
+        for ($i = 0; $i < strlen($xoops_key); $i++) {
+            if ($i < $length) {
+                $uu++;
+                if ($uu == $strip) {
+                    $ret .= substr($xoops_key, $i, 1) . '-';
+                    $uu = 0;
+                } else {
+                    if (substr($xoops_key, $i, 1) != '-') {
+                        $ret .= substr($xoops_key, $i, 1);
+                    } else {
+                        $uu--;
+                    }
+                }
+            }
+        }
+        $ret = str_replace('--', '-', $ret);
+        if (substr($ret, 0, 1) == '-') {
+            $ret = substr($ret, 2, strlen($ret));
+        }
+        if (substr($ret, strlen($ret) - 1, 1) == '-') {
+            $ret = substr($ret, 0, strlen($ret) - 1);
+        }
+        return $ret;
+    }
 }
 ?>

@@ -28,21 +28,37 @@ if (!defined('XOOPS_ROOT_PATH')) {
 	die('XOOPS root path not defined');
 }
 
+/**
+ * Solves issue when upgrading xoops version
+ * Paths not set and block would not work
+*/
+if (!defined('NW_MODULE_PATH')) {
+	define("NW_SUBPREFIX", "nw");
+	define("NW_MODULE_DIR_NAME", "xnews");
+	define("NW_MODULE_PATH", XOOPS_ROOT_PATH . "/modules/" . NW_MODULE_DIR_NAME);
+	define("NW_MODULE_URL", XOOPS_URL . "/modules/" . NW_MODULE_DIR_NAME);
+	define("NW_UPLOADS_NEWS_PATH", XOOPS_ROOT_PATH . "/uploads/" . NW_MODULE_DIR_NAME);
+	define("NW_TOPICS_FILES_PATH", XOOPS_ROOT_PATH . "/uploads/" . NW_MODULE_DIR_NAME . "/topics");
+	define("NW_ATTACHED_FILES_PATH", XOOPS_ROOT_PATH . "/uploads/" . NW_MODULE_DIR_NAME . "/attached");
+	define("NW_TOPICS_FILES_URL", XOOPS_URL . "/uploads/" . NW_MODULE_DIR_NAME . "/topics");
+	define("NW_ATTACHED_FILES_URL", XOOPS_URL . "/uploads/" . NW_MODULE_DIR_NAME . "/attached");
+}
+
 function nw_b_news_topics_show() {
-	global $storytopic;	// Don't know why this is used and where it's coming from ....
+	global $topic_id;	// Don't know why this is used and where it's coming from ....
     include_once NW_MODULE_PATH . '/include/functions.php';
     include_once NW_MODULE_PATH . '/class/class.newstopic.php';
 	include_once NW_MODULE_PATH . "/class/tree.php";
 
-	$jump = NW_MODULE_URL . '/index.php?storytopic=';
-	$storytopic = !empty($storytopic) ? intval($storytopic) : 0;
+	$jump = NW_MODULE_URL . '/index.php?topic_id=';
+	$topic_id = !empty($topic_id) ? intval($topic_id) : 0;
 	$restricted = nw_getmoduleoption('restrictindex', NW_MODULE_DIR_NAME);
 
 	$xt = new nw_NewsTopic();
 	$allTopics = $xt->getAllTopics($restricted);
 	$topic_tree = new nw_MyXoopsObjectTree($allTopics, 'topic_id', 'topic_pid');
 	$additional = " onchange='location=\"".$jump."\"+this.options[this.selectedIndex].value'";
-	$block['selectbox'] = $topic_tree->makeSelBox('storytopic', 'topic_title', '-- ', '', true, 0, $additional);
+	$block['selectbox'] = $topic_tree->makeSelBox('topic_id', 'topic_title', '-- ', '', true, 0, $additional);
 	
 	//DNPROSSI ADDED
 	$block['newsmodule_url']= NW_MODULE_URL;

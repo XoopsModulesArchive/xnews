@@ -219,15 +219,15 @@ define("_AM_NW_CLONER_ACTION_INSTALL", "Install/Uninstall");
 
 define("_AM_NW_CLONER_IMPORTNEWS", "Import original News module data");
 define("_AM_NW_CLONER_IMPORTNEWSDESC1", "Original News module exists! Import data now?");
-define("_AM_NW_CLONER_IMPORTNEWSDESC2", "The import button only appears if xNews module stories table is empty. <br />
+define("_AM_NW_CLONER_IMPORTNEWSDESC2", "The import button only appears if x"."News module stories table is empty. <br />
                                          If you added story item before importing from <br />
-                                         original News module you will have to uninstall/reinstall xNews. <br />
+                                         original News module you will have to uninstall/reinstall x"."News. <br />
                                          If you already imported original News Module data, leave as is.");
 define("_AM_NW_CLONER_IMPORTNEWSSUB", "Import");
 define("_AM_NW_CLONER_NEWSIMPORTED", "Original News module data correctly imported.");
 
 // Added in version 1.68 Beta
-define("_AM_NW_DESCRIPTION", "<H3>xNews is a clonable news module</H3> 
+define("_AM_NW_DESCRIPTION", "<H3>x"."News is a clonable news module</H3> 
 							  where users can post news/comments. The module can be cloned to enable one only method for many different tasks. Other than usual news it can be used for info, links and more all with their own blocks, topics and settings.");
 
 // Added in version 1.68 RC1
@@ -237,5 +237,16 @@ define("_AM_NW_CLONER_CLONEUPGRADED", "Upgraded");
 define("_AM_NW_CLONER_UPGRADEFORCE", "Force upgrade");
 define("_AM_NW_CLONER_CLONEDELETION", "Deleting Clone");
 define("_AM_NW_CLONER_SUREDELETE", "Are you sure you want to delete <font color='#000000'>'%s'</font> clone?<br />");
-define("_AM_NW_CLONER_CLONEID", "Clone ID was not set!"); 
+define("_AM_NW_CLONER_CLONEID", "Clone ID was not set!");
+
+// Added in version 1.68 RC2
+define("_AM_NW_INDEX", "Index"); 
+
+// Added in version 1.68 RC3
+define("_AM_NW_DOLINEBREAK", "Enable Line Break");
+define("_AM_NW_TOPICS","Topics");
+
+// Added in version 1.71
+define("_AM_NW_IMAGE_ROWS", "Image display rows");
+define("_AM_NW_PDF_ROWS", "PDF display rows");
 ?>

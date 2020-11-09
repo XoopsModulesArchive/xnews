@@ -1,14 +1,5 @@
 <?php
-// $Id: modinfo.php,v 1.6 2003/03/26 03:33:17 w4z004 Exp $
-
-// ------------------------------------------------------------------------- //
-//       Italian Translation by Marco Ragogna (m.ragogna@xoopsit.net)        //
-//                and Andrea Bandino (a.bandino@xoopsit.net)                 //
-//        webmasters of XOOPS :: Italian Corner  (www.xoopsit.net)           //
-//              the XOOPS Official Italian Site                              //
-//			and Alessandro Ricci (aricci@armordolls.it)						 //
-// ------------------------------------------------------------------------- //
-
+// $Id: modinfo.php,v 1.70 2010/09/01 17:48:07 dnprossi Exp $
 // Module Info
 
 // The name of this module
@@ -218,4 +209,12 @@ define("_MI_NW_SEOLEVEL", "Livello SEO ");
 define("_MI_NW_SEOLEVELDESC", "Quì si può scegliere se avere l'htaccess nella cartella root di xoops o in quella del modulo. <br /> Questo cambierà l'url visualizzato. <br /> A livello root: <br /> http://tuo.sito.com/notizie/argomenti.1/il-tuo-titolo-argomento.html  <br /> A livello modulo: <br /> http://tuo.sito.com/modules/xnews/notizie.argomenti.1/il-tuo-titolo-argomento.html<br /><br /> Solo nella modalità htaccess e i file dovranno essere installati di conseguenza.");
 define("_MI_NW_MODULE_LEVEL", "Livello modulo");
 define("_MI_NW_ROOT_LEVEL", "Livello root");
+
+//ADDED wishcraft 1.89 RC2
+define("_MI_NW_SEOENDOFURL", "Fine URL");
+define("_MI_NW_SEOENDOFURL_DESC", "Estensione file per i file HTML");
+define("_MI_NW_SEOENDOFURLRSS", "Fine URL");
+define("_MI_NW_SEOENDOFURLRSS_DESC", "Estensione file per le pagine RSS");
+define("_MI_NW_SEOENDOFURLPDF", "Fine URL");
+define("_MI_NW_SEOENDOFURLPDF_DESC", "Estensione file per file Adobe Acrobat (PDF)");
 ?>

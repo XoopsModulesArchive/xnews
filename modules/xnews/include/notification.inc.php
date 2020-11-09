@@ -59,7 +59,7 @@ function nw_notify_iteminfo($category, $item_id)
 		if($result) {
 			$result_array = $xoopsDB->fetchArray($result);
 			$item['name'] = $result_array['topic_id'];
-			$item['url'] = NW_MODULE_URL . '/index.php?storytopic=' . intval($item_id);
+			$item['url'] = NW_MODULE_URL . '/index.php?topic_id=' . intval($item_id);
 			return $item;
 		} else {
 			return null;

@@ -85,7 +85,6 @@ if ($approveprivilege && is_object($xoopsUser) && $xoopsUser->isAdmin($xoopsModu
 		$sform->addElement(new XoopsFormText(_MA_NW_AUTHOR_ID, 'author', 10, 10, $newsauthor), false);
 	}
 }
-
 $editor=nw_getWysiwygForm(_MA_NW_THESCOOP, 'hometext', $hometext, 15, 60, '100%', '350px', 'hometext_hidden');
 $sform->addElement($editor,true);
 
@@ -172,6 +171,27 @@ if($allowupload) {
 			$sform->addElement($pictureTray);
 		}
 	}
+	//DNPROSSI - 1.71
+	if(nw_getmoduleoption('images_display', NW_MODULE_DIR_NAME)) {
+		//Select image rows
+		$image_rows = new XoopsFormSelect(_AM_NW_IMAGE_ROWS, 'imagerows', $imagerows);
+		$image_rows->addOption(1, '1');
+		$image_rows->addOption(2, '2');
+		$image_rows->addOption(3, '3');
+		$image_rows->addOption(4, '4');
+		$image_rows->addOption(5, '5');
+		$sform->addElement($image_rows);
+	}
+	if(nw_getmoduleoption('pdf_display', NW_MODULE_DIR_NAME)) {
+		//Select pdf rows
+		$pdf_rows = new XoopsFormSelect(_AM_NW_PDF_ROWS, 'pdfrows', $pdfrows);
+		$pdf_rows->addOption(1, '1');
+		$pdf_rows->addOption(2, '2');
+		$pdf_rows->addOption(3, '3');
+		$pdf_rows->addOption(4, '4');
+		$pdf_rows->addOption(5, '5');
+		$sform->addElement($pdf_rows);
+	}
 	$sform->addElement(new XoopsFormFile(_MA_NW_SELECT_IMAGE, 'attachedimage', $xoopsModuleConfig['maxuploadsize']), false);
 }
 
@@ -215,6 +235,10 @@ $smiley_checkbox = new XoopsFormCheckBox('', 'nosmiley', $nosmiley);
 $smiley_checkbox->addOption(1, _DISABLESMILEY);
 $option_tray->addElement($smiley_checkbox);
 
+//DNPROSSI - dobr
+$linebreak_checkbox = new XoopsFormCheckBox('', 'dobr', $dobr);
+$linebreak_checkbox->addOption(1, _AM_NW_DOLINEBREAK);
+$option_tray->addElement($linebreak_checkbox);
 
 $sform->addElement($option_tray);
 

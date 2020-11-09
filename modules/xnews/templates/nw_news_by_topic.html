@@ -5,7 +5,7 @@
 	<td width="<{$column_width}>%" valign="top">
 	<{foreach item=topic from=$columns[i]}>
     <div class="itemBody">
-    	<div class="itemInfo"><span class="itemText"><a href="<{$newsmodule_url}>/index.php?storytopic=<{$topic.id}>"><{$topic.title}></a></span></div>
+    	<div class="itemInfo"><span class="itemText"><a href="<{$newsmodule_url}>/index.php?topic_id=<{$topic.id}>"><{$topic.title}></a></span></div>
 		<{counter start=0 print=false assign=storynum}>
         <{foreach item=story from=$topic.stories}>
         	<{if $storynum == 0}>
@@ -20,7 +20,7 @@
 			<{/foreach}>
 			<{if $storynum > 1}>
 				</ul>
-				<a href="<{$newsmodule_url}>/index.php?storytopic=<{$topic.id}>"><{$lang_morereleases}><{$topic.title}></a>
+				<a href="<{$newsmodule_url}>/index.php?topic_id=<{$topic.id}>"><{$lang_morereleases}><{$topic.title}></a>
 			<{/if}>
 	</div><br />
 	<{/foreach}>

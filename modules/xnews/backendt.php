@@ -42,7 +42,7 @@ include_once NW_MODULE_PATH . '/class/class.newsstory.php';
 include_once NW_MODULE_PATH . '/class/class.newstopic.php';
 include_once NW_MODULE_PATH . '/include/functions.php';
 
-error_reporting(0);
+error_reporting(E_ALL);
 $GLOBALS['xoopsLogger']->activated = false;
 
 if(!nw_getmoduleoption('topicsrss', NW_MODULE_DIR_NAME)) {
@@ -101,13 +101,19 @@ if (!$tpl->is_cached('db:nw_news_rss.html', $topicid)) {
 		foreach ($sarray as $story) {
 			$storytitle = $story->title();
 			//if we are allowing html, we need to use htmlspecialchars or any bug will break the output
-			$description = htmlspecialchars($story->hometext());
+			$description = htmlspecialchars($story->hometext(), ENT_QUOTES);
 			
 			// DNPROSSI SEO
 			$seo_enabled = nw_getmoduleoption('seo_enable', NW_MODULE_DIR_NAME);
 			$item_title = '';
 			if ( $seo_enabled != 0 ) $item_title = nw_remove_accents($storytitle);	
-			$tpl->append('items', array('title' => $storytitle, 'link' => nw_seo_UrlGenerator(_MA_NW_SEO_ARTICLES, $story->storyid(), $item_title), 'guid' => NW_MODULE_URL . '/article.php?storyid=' . $story->storyid(), 'pubdate' => formatTimestamp($story->published(), 'rss'), 'description' => $description));
+            $tpl->append('items', array(
+                'title' => XoopsLocal::convert_encoding(htmlspecialchars($storytitle, ENT_QUOTES)) ,
+                'link' => nw_seo_UrlGenerator(_MA_NW_SEO_ARTICLES, $story->storyid(), $item_title) ,
+                'guid' => $story->nw_stripeKey(md5($story->title().$story->topic_title), 7, 32),
+				'category' => XoopsLocal::convert_encoding(htmlspecialchars($story->topic_title, ENT_QUOTES)) ,
+                'pubdate' => formatTimestamp($story->published(), 'rss') ,
+                'description' => $description));
 		}
 	}
 }

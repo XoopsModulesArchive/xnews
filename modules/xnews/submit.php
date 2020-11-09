@@ -30,8 +30,8 @@ if (!defined('XOOPS_ROOT_PATH')) {
 include_once NW_MODULE_PATH . '/class/class.newsstory.php';
 include_once NW_MODULE_PATH . '/class/class.sfiles.php';
 include_once NW_MODULE_PATH . '/class/class.newstopic.php';
-include_once XOOPS_ROOT_PATH.'/class/uploader.php';
-include_once XOOPS_ROOT_PATH.'/header.php';
+include_once XOOPS_ROOT_PATH. '/class/uploader.php';
+include_once XOOPS_ROOT_PATH. '/header.php';
 include_once NW_MODULE_PATH . '/include/functions.php';
 if (file_exists(NW_MODULE_PATH . '/language/'.$xoopsConfig['language'].'/admin.php')) {
     include_once NW_MODULE_PATH . '/language/'.$xoopsConfig['language'].'/admin.php';
@@ -159,6 +159,11 @@ switch ($op) {
         $topicid = $story->topicid();
         $notifypub = $story->notifypub();
         $picture = $story->picture();
+        //DNPROSSI - 1.71
+        $imagerows = $story->imagerows();
+        $pdfrows = $story->pdfrows();
+        //DNPROSSI - dobr
+        $dobr = $story->dobr();
         $approve = 0;
         $published = $story->published();
         if (isset($published) && $published > 0) {
@@ -256,7 +261,7 @@ switch ($op) {
 	    	$nosmiley = 0;
 		}
 		if ($approveprivilege) {
-		    $nohtml = isset($_POST['nohtml']) ? intval($_POST['nohtml']) : 0;
+			$nohtml = isset($_POST['nohtml']) ? intval($_POST['nohtml']) : 0;
 			$story->setNohtml($nohtml);
 			if (!isset($_POST['approve'])) {
 			    $approve = 0;
@@ -264,7 +269,14 @@ switch ($op) {
 		} else {
 			$story->setNohtml = 1;
 		}
-
+		//DNPROSSI - dobr
+		$dobr = isset($_POST['dobr']) ? intval($_POST['dobr']) : 0;
+		if (isset($dobr) && ($dobr == 0 || $dobr == 1)) {
+		    $story->setDobr($dobr);
+		} else {
+	    	$dobr = 0;
+		}
+		
 		$title = $story->title('InForm');
 	  	$hometext = $story->hometext('InForm');
 	  	if ($approveprivilege) {
@@ -330,6 +342,13 @@ switch ($op) {
 		$story->setNohtml($nohtml_db);
 		$nosmiley = isset($_POST['nosmiley']) ? intval($_POST['nosmiley']) : 0;
 		$story->setNosmiley($nosmiley);
+		$dobr = isset($_POST['dobr']) ? intval($_POST['dobr']) : 0;
+		$story->setDobr($dobr); 
+		//DNPROSSI 1.71
+		$imagerows = isset($_POST['imagerows']) ? intval($_POST['imagerows']) : 1;
+		$story->Setimagerows($imagerows);
+		$pdfrows = isset($_POST['pdfrows']) ? intval($_POST['pdfrows']) : 1;
+		$story->Setpdfrows($pdfrows);
 		$notifypub = isset($_POST['notifypub']) ? intval($_POST['notifypub']) : 0;
 		$story->setNotifyPub($notifypub);
 		$story->setType($_POST['type']);
@@ -473,17 +492,22 @@ switch ($op) {
 			}
 		}
 		$destname = '';
-
+			
+		//WISHCRAFT
+		if ( isset($_POST['item_tag']) ) //Hide warning when tags not installed
+		{
+			$story->Settags($_POST['item_tag']);
+		}
 		$result = $story->store();
+
 		if ($result) {
 			if ($approveprivilege && nw_getmoduleoption('tags', NW_MODULE_DIR_NAME)) {
 				$tag_handler = xoops_getmodulehandler('tag', 'tag');
 				$tag_handler->updateByItem($_POST['item_tag'], $story->storyid(), $xoopsModule->getVar('dirname'), 0);
 	    	}
-
 			if(!$editmode) {
 				// 	Notification
-				// TODO: modifier afin qu'en cas de prépublication, la notification ne se fasse pas
+				// TODO: modifier afin qu'en cas de prÃ©publication, la notification ne se fasse pas
 				$notification_handler =& xoops_gethandler('notification');
 				$tags = array();
 				$tags['STORY_NAME'] = $story->title();
@@ -506,6 +530,11 @@ switch ($op) {
 			}
 
 			if($allowupload) {
+				//DNPROSSI - Control if writable dir
+				if ( !is_writeable(NW_ATTACHED_FILES_PATH) ) {
+					redirect_header(NW_MODULE_URL . '/admin/index.php?op=newarticle',2,_AD_WARNINGNOTWRITEABLE);
+					exit();
+				}
 				// Manage upload(s)
 				if(isset($_POST['delupload']) && count($_POST['delupload']) > 0) {
 					foreach ($_POST['delupload'] as $onefile) {
@@ -513,7 +542,6 @@ switch ($op) {
 						$sfiles->delete();
 					}
 				}
-
 				if(isset($_POST['xoops_upload_file'])) {
 					$fldname = $_FILES[$_POST['xoops_upload_file'][0]];
 					$fldname = (get_magic_quotes_gpc()) ? stripslashes($fldname['name']) : $fldname['name'];
@@ -535,6 +563,22 @@ switch ($op) {
 								$sfiles->setDownloadname($destname);
 								if(!$sfiles->store()) {
 									echo _AM_NW_UPLOAD_DBERROR_SAVE;
+								}
+								//DNPROSSI - 1.71 - creates attached image maxsize
+								if ( strstr($sfiles->getMimetype(), 'image') ) { 
+									$fullPictureName = NW_ATTACHED_FILES_PATH . '/' . basename($destname);
+									$newName = NW_ATTACHED_FILES_PATH . '/redim_' . basename($destname);
+									nw_resizePicture($fullPictureName, $newName, $xoopsModuleConfig['maxwidth'], $xoopsModuleConfig['maxheight']);
+									if(file_exists($newName)) {
+										@unlink($fullPictureName);
+										rename($newName, $fullPictureName);
+									}
+								}
+								//DNPROSSI - 1.71 - creates attached image thumb
+								if ( strstr($sfiles->getMimetype(), 'image') ) { 
+									$fullPictureName = NW_ATTACHED_FILES_PATH . '/' . basename($destname);
+									$thumbName = NW_ATTACHED_FILES_PATH . '/thumb_' . basename($destname);
+									nw_resizePicture($fullPictureName, $thumbName, $xoopsModuleConfig['thumb_maxwidth'], $xoopsModuleConfig['thumb_maxheight'], true);
 								}
 							} else {
 								echo _AM_NW_UPLOAD_ERROR. ' ' . $uploader->getErrors();
@@ -565,6 +609,7 @@ switch ($op) {
 		$noname = 0;
 		$nohtml = 0;
 		$nosmiley = 0;
+		$dobr = 0;
 		$notifypub = 1;
 		$topicid = 0;
 		if ($approveprivilege) {

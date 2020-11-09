@@ -84,14 +84,23 @@ function nw_cloneFileFolder($path, $patterns)
 		}
 		else
 		{
-			$content = file_get_contents($path);			
-			for ( $i = 0; $i < sizeof($patterns); ++$i )
-			{
-				$content = str_replace($patKeys[$i], $patValues[$i], $content);   
-			}
-			file_put_contents($newpath, $content);
-			@chmod($newpath, 0755);
-			//trigger_error($path. ' ---- ' .$newpath , E_USER_WARNING);
+			$path_info = pathinfo($path);
+			$path_ext = $path_info['extension'];
+			//trigger_error($path . " -------- " . $path_ext, E_USER_WARNING);
+			
+				//trigger_error($path , E_USER_WARNING);
+				$content = file_get_contents($path);			
+				if ( $path_ext != 'txt' ) 
+				{
+					for ( $i = 0; $i < sizeof($patterns); ++$i )
+					{
+						$content = str_replace($patKeys[$i], $patValues[$i], $content);   
+					}
+				}
+				file_put_contents($newpath, $content);
+				@chmod($newpath, 0755);
+				//trigger_error($path. ' ---- ' .$newpath , E_USER_WARNING);
+				
 		}  
 	}
 }

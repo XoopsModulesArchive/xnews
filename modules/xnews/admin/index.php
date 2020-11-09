@@ -265,8 +265,8 @@ function PruneManager()
 {
     include_once XOOPS_ROOT_PATH.'/class/xoopsformloader.php';
     xoops_cp_header();
-    adminmenu(3);
-    echo '<br /><br /><br />';
+    adminmenu(3, _AM_NW_PRUNENEWS);  
+    echo '<h2>' . _AM_NW_PRUNENEWS . '</h2><br />';
 	$sform = new XoopsThemeForm(_AM_NW_PRUNENEWS, 'pruneform', NW_MODULE_URL . '/admin/index.php', 'post');
 	$sform->addElement(new XoopsFormTextDateSelect(_AM_NW_PRUNE_BEFORE, 'prune_date',15,time()), true);
 	$onlyexpired=new xoopsFormCheckBox('', 'onlyexpired');
@@ -303,7 +303,7 @@ function ConfirmBeforeToPrune()
 	if(isset($_POST['pruned_topics'])) {
 		$topiclist=implode(',',$_POST['pruned_topics']);
 	}
-	echo '<h4>' . _AM_NW_PRUNENEWS . '</h4>';
+	echo '<h2>' . _AM_NW_PRUNENEWS . '</h2>';
 	$expired=0;
 	if(isset($_POST['onlyexpired'])) {
 		$expired = intval($_POST['onlyexpired']);
@@ -358,8 +358,8 @@ function Newsletter()
 {
     include_once XOOPS_ROOT_PATH.'/class/xoopsformloader.php';
     xoops_cp_header();
-    adminmenu(5);
-    echo '<br /><br /><br />';
+    adminmenu(5, _AM_NW_NEWSLETTER);
+    echo '<h2>' . _AM_NW_NEWSLETTER . '</h2><br />';
 	$sform = new XoopsThemeForm(_AM_NW_NEWSLETTER, 'newsletterform', NW_MODULE_URL . '/admin/index.php', 'post');
 	$dates_tray = new XoopsFormElementTray(_AM_NW_NEWSLETTER_BETWEEN);
 	$date1 = new XoopsFormTextDateSelect('', 'date1',15,time());
@@ -473,8 +473,8 @@ function NewsExport()
 {
     include_once XOOPS_ROOT_PATH.'/class/xoopsformloader.php';
     xoops_cp_header();
-    adminmenu(4);
-    echo '<br /><br /><br />';
+    adminmenu(4, _AM_NW_EXPORT_NEWS);
+    echo '<h2>' . _AM_NW_EXPORT_NEWS . '</h2><br />';
 	$sform = new XoopsThemeForm(_AM_NW_EXPORT_NEWS, 'exportform', NW_MODULE_URL . '/admin/index.php', 'post');
 	$dates_tray = new XoopsFormElementTray(_AM_NW_EXPORT_BETWEEN);
 	$date1 = new XoopsFormTextDateSelect('', 'date1',15,time());
@@ -570,6 +570,7 @@ function LaunchExport()
     		$content .= sprintf("\t<hostname>%s</hostname>\n",$onestory->hostname());
     		$content .= sprintf("\t<nohtml>%d</nohtml>\n",$onestory->nohtml());
     		$content .= sprintf("\t<nosmiley>%d</nosmiley>\n",$onestory->nosmiley());
+    		$content .= sprintf("\t<dobr>%d</dobr>\n",$onestory->dobr());
     		$content .= sprintf("\t<hometext>%s</hometext>\n",$onestory->hometext());
     		$content .= sprintf("\t<bodytext>%s</bodytext>\n",$onestory->bodytext());
     		$content .= sprintf("\t<description>%s</description>\n",$onestory->description());
@@ -584,6 +585,9 @@ function LaunchExport()
     		$content .= sprintf("\t<comments>%u</comments>\n",$onestory->comments());
     		$content .= sprintf("\t<rating>%f</rating>\n",$onestory->rating());
 	    	$content .= sprintf("\t<votes>%u</votes>\n",$onestory->votes());
+	    	$content .= sprintf("\t<imagesrows>%u</imagerows>\n",$onestory->imagerows());
+	    	$content .= sprintf("\t<pdfrows>%u</pdfrows>\n",$onestory->pdfrows());
+	    	$content .= sprintf("\t<tags>%s</tags>\n",$onestory->tags());
     		$content .= sprintf("</xoops_story>\n");
     		$content = nw_utf8_encode($content);
     		fwrite($fp,$content);
@@ -621,7 +625,7 @@ function topicsmanager()
     global $xoopsDB, $xoopsConfig, $xoopsModule, $myts;
     include_once XOOPS_ROOT_PATH.'/class/xoopsformloader.php';
     xoops_cp_header();
-    adminmenu(0);
+    adminmenu(0, _AM_NW_TOPICSMNGR);
     $uploadfolder=sprintf(_AM_NW_UPLOAD_WARNING, NW_TOPICS_FILES_URL);
     $uploadirectory='/uploads/' . $xoopsModule -> dirname().'/images/topics';
     $start = isset($_GET['start']) ? intval($_GET['start']) : 0;
@@ -631,9 +635,9 @@ function topicsmanager()
 	$totaltopics = count($topics_arr);
 	$class='';
 
-    echo '<h4>' . _AM_NW_CONFIG . '</h4>';
+    echo '<h2>' . _AM_NW_TOPICSMNGR . '</h2>';
 	nw_collapsableBar('topicsmanager', 'toptopicsmanager');
-	echo "<img onclick=\"toggle('toptable'); toggleIcon('toptableicon');\" id='toptopicsmanager' name='toptopicsmanager' src='" . NW_MODULE_URL . "/images/close12.gif' alt='' /></a>&nbsp;"._AM_NW_TOPICSMNGR . ' (' . $totaltopics . ')'."</h4>";
+	echo "<img onclick=\"toggle('toptable'); toggleIcon('toptableicon');\" id='toptopicsmanager' name='toptopicsmanager' src='" . NW_MODULE_URL . "/images/close12.gif' alt='' /></a>&nbsp;"._AM_NW_TOPICS . ' (' . $totaltopics . ')'."</h4>";
 	echo "<div id='topicsmanager'>";
 	echo '<br />';
     echo "<div style='text-align: center;'>";
@@ -933,7 +937,7 @@ function delTopic()
     global $xoopsDB, $xoopsModule;
     if (!isset($_POST['ok'])) {
         xoops_cp_header();
-        echo '<h4>' . _AM_NW_CONFIG . '</h4>';
+        echo '<h2>' . _AM_NW_TOPICSMNGR . '</h2>';
         $xt = new XoopsTopic( $xoopsDB->prefix('nw_topics'), intval($_GET['topic_id']));
         xoops_confirm(array( 'op' => 'delTopic', 'topic_id' => intval($_GET['topic_id']), 'ok' => 1), 'index.php', _AM_NW_WAYSYWTDTTAL . '<br />' . $xt->topic_title('S'));
     } else {
@@ -1086,12 +1090,12 @@ function Stats()
 	} else {
 		include_once NW_MODULE_PATH . '/language/english/main.php';
 	}
-    adminmenu(6);
+    adminmenu(6, _AM_NW_STATS);
     $news = new nw_NewsStory();
     $stats = array();
     $stats=$news->GetStats(nw_getmoduleoption('storycountadmin', NW_MODULE_DIR_NAME));
 	$totals=array(0,0,0,0,0);
-    printf("<h1>%s</h1>\n",_AM_NW_STATS);
+    printf("<h2>%s</h2>\n",_AM_NW_STATS);
 
     // First part of the stats, everything about topics
 	$storiespertopic=$stats['storiespertopic'];
@@ -1104,7 +1108,7 @@ function Stats()
 	echo "<div style='text-align: center;'><b>" . _AM_NW_STATS0 . "</b><br />\n";
 	echo "<table border='0' width='100%'><tr class='bg3'><td align='center'>"._AM_NW_TOPIC."</td><td align='center'>" . _MA_NW_ARTICLES . "</td><td>" . _MA_NW_VIEWS . "</td><td>" . _AM_NW_UPLOAD_ATTACHFILE . "</td><td>" . _AM_NW_EXPARTS ."</td><td>" ._AM_NW_STATS1 ."</td></tr>";
 	foreach ( $storiespertopic as $topicid => $data ) {
-		$url=NW_MODULE_URL . '/index.php?storytopic=' . $topicid;
+		$url=NW_MODULE_URL . '/index.php?topic_id=' . $topicid;
 		$views=0;
 		if(array_key_exists($topicid,$readspertopic)) {
 			$views=$readspertopic[$topicid];
@@ -1140,7 +1144,7 @@ function Stats()
 	echo "<div style='text-align: center;'><b>" . _AM_NW_STATS3 . '</b><br /><br />' . _AM_NW_STATS4 . "<br />\n";
 	echo "<table border='0' width='100%'><tr class='bg3'><td align='center'>"._AM_NW_TOPIC."</td><td align='center'>" . _AM_NW_TITLE . "</td><td>" . _AM_NW_POSTER . "</td><td>" . _MA_NW_VIEWS . "</td></tr>\n";
 	foreach ( $mostreadnews as $storyid => $data ) {
-		$url1=NW_MODULE_URL . '/index.php?storytopic=' . $data['topicid'];
+		$url1=NW_MODULE_URL . '/index.php?topic_id=' . $data['topicid'];
 		$url2=NW_MODULE_URL . '/article.php?storyid=' . $storyid;
 		$url3=XOOPS_URL . '/userinfo.php?uid=' . $data['uid'];
 		$class = ($class == 'even') ? 'odd' : 'even';
@@ -1153,7 +1157,7 @@ function Stats()
 	echo '<br /><br />'._AM_NW_STATS5;
 	echo "<table border='0' width='100%'><tr class='bg3'><td align='center'>"._AM_NW_TOPIC."</td><td align='center'>" . _AM_NW_TITLE . "</td><td>" . _AM_NW_POSTER . "</td><td>" . _MA_NW_VIEWS . "</td></tr>\n";
 	foreach ( $lessreadnews as $storyid => $data ) {
-		$url1=NW_MODULE_URL . '/index.php?storytopic=' . $data['topicid'];
+		$url1=NW_MODULE_URL . '/index.php?topic_id=' . $data['topicid'];
 		$url2=NW_MODULE_URL . '/article.php?storyid=' . $storyid;
 		$url3=XOOPS_URL . '/userinfo.php?uid=' . $data['uid'];
 		$class = ($class == 'even') ? 'odd' : 'even';
@@ -1166,7 +1170,7 @@ function Stats()
 	echo '<br /><br />'._AM_NW_STATS6;
 	echo "<table border='0' width='100%'><tr class='bg3'><td align='center'>"._AM_NW_TOPIC."</td><td align='center'>" . _AM_NW_TITLE . "</td><td>" . _AM_NW_POSTER . "</td><td>" . _MA_NW_RATING . "</td></tr>\n";
 	foreach ( $bestratednews as $storyid => $data ) {
-		$url1=NW_MODULE_URL . '/index.php?storytopic=' . $data['topicid'];
+		$url1=NW_MODULE_URL . '/index.php?topic_id=' . $data['topicid'];
 		$url2=NW_MODULE_URL . '/article.php?storyid=' . $storyid;
 		$url3=XOOPS_URL . '/userinfo.php?uid=' . $data['uid'];
 		$class = ($class == 'even') ? 'odd' : 'even';
@@ -1230,8 +1234,8 @@ function Metagen()
 	} else {
 		include_once NW_MODULE_PATH . '/language/english/main.php';
 	}
-    adminmenu(7);
-    echo "<h1>"._AM_NW_METAGEN."</h1>";
+    adminmenu(7, _AM_NW_METAGEN);
+    echo "<h2>"._AM_NW_METAGEN."</h2>";
 	echo _AM_NW_METAGEN_DESC."<br /><br />";
 
 	// Metagen Options
@@ -1341,7 +1345,7 @@ function NewsCloner()
 	global $xoopsDB, $xoopsConfig, $xoopsModule, $myts;
 	include_once XOOPS_ROOT_PATH.'/class/xoopsformloader.php';
     xoops_cp_header();
-    adminmenu(8);
+    adminmenu(8, _AM_NW_CLONER);
     
     $clone_modulename = '';
    
@@ -1370,7 +1374,7 @@ function NewsCloner()
 	$totalclones = count($clone_arr);
 	$class='';
 
-    echo '<h4>' . _AM_NW_CLONER . '</h4>';
+    echo '<h2>' . _AM_NW_CLONER . '</h2>';
 	nw_collapsableBar('NewsCloner', 'topNewsCloner');
 	echo "<img onclick=\"toggle('toptable'); toggleIcon('toptableicon');\" id='topNewsCloner' name='topNewsCloner' src='" . NW_MODULE_URL . "/images/close12.gif' alt='' /></a>&nbsp;" . _AM_NW_CLONER_CLONES . ' (' . $totalclones . ')'."</h4>";
 	echo "<div id='NewsCloner'>";
@@ -1485,22 +1489,7 @@ function NewsCloner()
 	$count = $xoopsDB->getRowsNum($result2);
 	
 	$tmpmodule_handler =& xoops_gethandler('module');
-	
-	//Draw Import News Form
-	$sform = new XoopsThemeForm(_AM_NW_CLONER_IMPORTNEWS, "clonerimportform", NW_MODULE_URL . "/admin/index.php", "post");
-    
-    if ( $tmpmodule_handler->getByDirname('news') && nw_TableExists($xoopsDB->prefix('stories')) && $count >= 0) {
-		$sform->addElement(new XoopsFormLabel("", _AM_NW_CLONER_IMPORTNEWSDESC2), false);
-	}
-	
-	$sform->addElement(new XoopsFormHidden('op', 'clonenewsimport'), false);
-	if ( $tmpmodule_handler->getByDirname('news') && nw_TableExists($xoopsDB->prefix('stories')) && $count == 0) {
-		$button_tray = new XoopsFormElementTray(_AM_NW_CLONER_IMPORTNEWSDESC1 , _AM_NW_CLONER_IMPORTNEWSDESC2);
-		$submit_btn = new XoopsFormButton("", "post", _AM_NW_CLONER_IMPORTNEWSSUB, "submit");
-		$button_tray->addElement($submit_btn);
-		$sform->addElement($button_tray);
-	}
-	$sform->display();
+
 }
 
 /**
@@ -1637,57 +1626,6 @@ function CloneUpgrade()
 }
 
 /**
- * Cloner News Import - DNPROSSI
- */
-function CloneNewsImport()
-{
-	include_once "cloner.php";
-	global $xoopsDB, $xoopsConfig, $xoopsModule;
-	
-	$result = $xoopsDB->query("SELECT * FROM " . $xoopsDB->prefix('news_clonerdata'));
-	$ix = 0;
-	while ( $clone = $xoopsDB->fetchArray($result) ) {
-		$clone_arr[$ix] = $clone;
-		$ix++;
-	}
-		
-	$module_name = $clone_arr[0]['clone_name'];
-	$module_dirname = $clone_arr[0]['clone_dir'];
-	$module_version = $clone_arr[0]['clone_version'];
-	$module_subprefix = $clone_arr[0]['clone_subprefix'];
-		
-	//DNPROSSI - Import data from old news database files
-	$result1=$xoopsDB->queryF("INSERT INTO ". $xoopsDB->prefix($module_subprefix.'_stories') ." SELECT * FROM ". $xoopsDB->prefix('stories'));	
-	$result1=$xoopsDB->queryF("INSERT INTO ". $xoopsDB->prefix($module_subprefix.'_stories_files') ." SELECT * FROM ". $xoopsDB->prefix('stories_files'));
-	$result1=$xoopsDB->queryF("DELETE FROM ". $xoopsDB->prefix($module_subprefix.'_topics') ." WHERE topic_id = 1");
-	$result1=$xoopsDB->queryF("ALTER TABLE ". $xoopsDB->prefix($module_subprefix.'_topics') ." AUTO_INCREMENT = 1");
-	$result1=$xoopsDB->queryF("INSERT INTO ". $xoopsDB->prefix($module_subprefix.'_topics') ." SELECT * FROM ". $xoopsDB->prefix('topics'));
-	$result1=$xoopsDB->queryF("INSERT INTO ". $xoopsDB->prefix($module_subprefix.'_stories_votedata') ." SELECT * FROM ". $xoopsDB->prefix('stories_votedata'));
-	
-	//Copy all images, attachments, topic icons to new uploads/modulename dir
-	//Topic icons
-	$sourcepath = XOOPS_ROOT_PATH . '/modules/news/images/topics/';
-	$destinationpath = NW_TOPICS_FILES_PATH . '/';
-	
-	nw_clonecopyfile($sourcepath, $destinationpath, '');
-	
-	$sourcepath = XOOPS_ROOT_PATH . '/uploads/';
-	$destinationpath = NW_ATTACHED_FILES_PATH . '/';
-	
-	//Attached files
-	$result2 = $xoopsDB->query("SELECT * FROM " . $xoopsDB->prefix('stories_files'));
-	$ix = 0;
-	while ( $file = $xoopsDB->fetchArray($result2) ) {
-		$file_arr[$ix] = $file;
-		nw_clonecopyfile($sourcepath, $destinationpath, $file_arr[$ix]['downloadname']);
-		//trigger_error($file_arr[$ix]['downloadname'], E_USER_WARNING); 
-		$ix++;
-	}
-		
-	redirect_header('index.php?op=cloner', 5, _AM_NW_CLONER_NEWSIMPORTED);		
-}
-
-/**
  * Delete Clone - DNPROSSI - 1.68 RC1
  */
 function CloneDelete()
@@ -1734,9 +1672,22 @@ function CloneDeleteApply()
 
 		$del_dirname = $_POST['module_name'];
         
-		$delPath = XOOPS_ROOT_PATH . "/modules/" . $del_dirname;
+		$delPath1 = XOOPS_ROOT_PATH . "/modules/" . $del_dirname;
+		$delPath2 = XOOPS_ROOT_PATH . "/uploads/" . $del_dirname;
 
-		if ( nw_removewholeclone($delPath) == TRUE ) {
+		if ( file_exists($delPath2) && is_dir($delPath2) ) 
+		{
+			if ( nw_removewholeclone($delPath1) == TRUE && nw_removewholeclone($delPath2) == TRUE ) 
+			{ 			
+				$label = sprintf(_AM_NW_CLONER_CLONEDELETED, $del_dirname);
+				redirect_header('index.php?op=cloner', 5, $label);
+			} else {
+				$label = sprintf(_AM_NW_CLONER_CLONEDELETEERR, $del_dirname);
+				redirect_header('index.php?op=cloner', 5, $label);
+			}
+		}			
+		elseif ( nw_removewholeclone($delPath1) == TRUE ) 
+		{				
 			$label = sprintf(_AM_NW_CLONER_CLONEDELETED, $del_dirname);
 			redirect_header('index.php?op=cloner', 5, $label);
 		} else {
@@ -1780,8 +1731,8 @@ switch ($op) {
 
     case 'newarticle':
         xoops_cp_header();
-        adminmenu(1);
-        echo '<h4>' . _AM_NW_CONFIG . '</h4>';
+        adminmenu(1, _AM_NW_CONFIG);
+        echo '<h2>' . _AM_NW_CONFIG . '</h2>';
         include_once XOOPS_ROOT_PATH . '/class/module.textsanitizer.php';
         newSubmissions();
         autoStories();
@@ -1800,6 +1751,9 @@ switch ($op) {
         $nohtml = 0;
         $approve = 0;
         $nosmiley = 0;
+        $dobr = 1;
+        $imagerows = 1;
+        $pdfrows = 1;
 	    $autodate = '';
 	    $expired = '';
 	    $topicid = 0;
@@ -1925,10 +1879,6 @@ switch ($op) {
     	CloneUpgrade();
     	break;
 
-    case 'clonenewsimport':
-    	CloneNewsImport();
-    	break;
-    	
     case 'clonedelete':
 		CloneDelete();
 		break;

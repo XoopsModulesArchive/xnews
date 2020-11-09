@@ -11,12 +11,31 @@
 // # Public License (GPL - version 1 or 2) as published by the          #
 // # Free Software Foundation (http://www.gnu.org/)                     #
 // ######################################################################
+if (!defined('XOOPS_ROOT_PATH')) {
+	die('XOOPS root path not defined');
+}
+
+/**
+ * Solves issue when upgrading xoops version
+ * Paths not set and block would not work
+*/
+if (!defined('NW_MODULE_PATH')) {
+	define("NW_SUBPREFIX", "nw");
+	define("NW_MODULE_DIR_NAME", "xnews");
+	define("NW_MODULE_PATH", XOOPS_ROOT_PATH . "/modules/" . NW_MODULE_DIR_NAME);
+	define("NW_MODULE_URL", XOOPS_URL . "/modules/" . NW_MODULE_DIR_NAME);
+	define("NW_UPLOADS_NEWS_PATH", XOOPS_ROOT_PATH . "/uploads/" . NW_MODULE_DIR_NAME);
+	define("NW_TOPICS_FILES_PATH", XOOPS_ROOT_PATH . "/uploads/" . NW_MODULE_DIR_NAME . "/topics");
+	define("NW_ATTACHED_FILES_PATH", XOOPS_ROOT_PATH . "/uploads/" . NW_MODULE_DIR_NAME . "/attached");
+	define("NW_TOPICS_FILES_URL", XOOPS_URL . "/uploads/" . NW_MODULE_DIR_NAME . "/topics");
+	define("NW_ATTACHED_FILES_URL", XOOPS_URL . "/uploads/" . NW_MODULE_DIR_NAME . "/attached");
+}
 
 function nw_b_news_latestnews_show($options)
 {
     global $xoopsTpl, $xoopsUser, $xoopsConfig;
     include_once NW_MODULE_PATH . '/include/functions.php';
-
+	
     $block = array();
     
     include_once NW_MODULE_PATH . '/class/class.newsstory.php';
@@ -30,6 +49,12 @@ function nw_b_news_latestnews_show($options)
     }else{
         include_once NW_MODULE_PATH . '/language/english/main.php';
     }
+    
+    //DNPROSSI Added - xlanguage installed and active 
+	$module_handler =& xoops_gethandler('module');
+	$xlanguage = $module_handler->getByDirname('xlanguage');
+	if ( is_object($xlanguage) && $xlanguage->getVar('isactive') == true ) 
+	{ $xlang = true; } else { $xlang = false; }  
 
     $myts =& MyTextSanitizer::getInstance();
     $sfiles = new nw_sFiles();
@@ -86,36 +111,49 @@ function nw_b_news_latestnews_show($options)
 			$news = $thisstory->prepare2show($filescount);
             
             $len = strlen($thisstory->hometext());
-            if ($letters < $len && $letters > 0){
+            if ($letters < $len && $letters > 0)
+            {
 
-			$patterns = array();
-			$replacements = array();
+				$patterns = array();
+				$replacements = array();
 			
-			if($options[4] != 0) { $height = 'height="'.$imgheight.'"'; } // set height = 0 in block option for auto height
+				if($options[4] != 0) { $height = 'height="'.$imgheight.'"'; } // set height = 0 in block option for auto height
 			
-            $startdiv = '<div style="float:'.$imgposition.'"><a href="' . NW_MODULE_URL . '/article.php?storyid='.$storyid.'">'; 
-            $style = 'style="border: '.$border.'px solid #'.$bordercolor.'"';
-			$enddiv = 'alt="'.$thisstory->title.'" width="'.$imgwidth.'" '.$height.' /></a></div>';
+				$startdiv = '<div style="float:'.$imgposition.'"><a href="' . NW_MODULE_URL . '/article.php?storyid='.$storyid.'">'; 
+				$style = 'style="border: '.$border.'px solid #'.$bordercolor.'"';
+				$enddiv = 'alt="'.$thisstory->title.'" width="'.$imgwidth.'" '.$height.' /></a></div>';
 		
-     		$patterns[] = "/\[img align=(['\"]?)(left|center|right)\\1 width=(['\"]?)([0-9]*)\\3]([^\"\(\)\?\&'<>]*)\[\/img\]/sU";
-			$patterns[] = "/\[img align=(['\"]?)(left|center|right)\\1]([^\"\(\)\?\&'<>]*)\[\/img\]/sU";
-			$patterns[] = "/\[img]([^\"\(\)\?\&'<>]*)\[\/img\]/sU"; 
-			$patterns[] = "/<img src=\"(.*)\" \/>/sU";             
-			$patterns[] = "/<img src=(.*) \/>/sU";             
+				$patterns[] = "/\[img align=(['\"]?)(left|center|right)\\1 width=(['\"]?)([0-9]*)\\3]([^\"\(\)\?\&'<>]*)\[\/img\]/sU";
+				$patterns[] = "/\[img align=(['\"]?)(left|center|right)\\1]([^\"\(\)\?\&'<>]*)\[\/img\]/sU";
+				$patterns[] = "/\[img]([^\"\(\)\?\&'<>]*)\[\/img\]/sU"; 
+				$patterns[] = "/<img src=\"(.*)\" \/>/sU";             
+				$patterns[] = "/<img src=(.*) \/>/sU";             
 
-			$replacements[] = $startdiv.'<img '.$style.' src="\\3" '.$enddiv;
-			$replacements[] = $startdiv.'<img '.$style.' src="\\3" '.$enddiv;
-			$replacements[] = $startdiv.'<img '.$style.' src="\\1" '.$enddiv;
-			$replacements[] = $startdiv.'<img '.$style.' src="\\1" '.$enddiv;
-			$replacements[] = $startdiv.'<img '.$style.' src="\\1" '.$enddiv;
-
-			$letters = strrpos(substr($thisstory->hometext,0, $letters), ' ');
-			//DNPROSSI changed xoops_substr to mb_substr for utf-8 support
-			$news['text'] = preg_replace($patterns, $replacements, mb_substr($thisstory->hometext, 0, $letters + 3, 'UTF-8'));
-			}
+				$replacements[] = $startdiv.'<img '.$style.' src="\\3" '.$enddiv;
+				$replacements[] = $startdiv.'<img '.$style.' src="\\3" '.$enddiv;
+				$replacements[] = $startdiv.'<img '.$style.' src="\\1" '.$enddiv;
+				$replacements[] = $startdiv.'<img '.$style.' src="\\1" '.$enddiv;
+				$replacements[] = $startdiv.'<img '.$style.' src="\\1" '.$enddiv;
+			
+				//DNPROSSI Added - xlanguage installed and active 
+				$story = "";
+				$story = $thisstory->hometext;
+		
+				if ( $xlang == true )
+				{ 
+					include_once XOOPS_ROOT_PATH.'/modules/xlanguage/include/functions.php';
+					$story = xlanguage_ml($story); 
+			
+				} 
+				//DNPROSSI New truncate function - now works correctly with html and utf-8
+				$html = $thisstory->nohtml() == 1 ? 0 : 1;
+				$dobr = $thisstory->dobr() == 1 ? 1 : 0;
+				$smiley = $thisstory->nosmiley() == 1 ? 0 : 1;
+				$news['text'] = nw_truncate($myts->displayTarea($story, $html, $smiley, 1, 1, $dobr), $letters+3, '...', false, $html);
+			} 
 			
             if(is_object($xoopsUser) && $xoopsUser->isAdmin(-1)){
-                $news['admin'] = '<a href="' . NW_MODULE_URL . '/admin/index.php?op=edit&amp;storyid='.$storyid.'"><img src="' . NW_MODULE_URL . '/images/edit_block.png" alt="'._EDIT.'" width="18" /></a> <a href="' . NW_MODULE_URL . '/admin/index.php?op=delete&amp;storyid='.$storyid.'"><img src="' . NW_MODULE_URL . '/images/delete_block.png" alt="'._DELETE.'" width="20" /></a>';
+                $news['admin'] = '<a href="' . NW_MODULE_URL . '/submit.php?op=edit&amp;storyid='.$storyid.'"><img src="' . NW_MODULE_URL . '/images/edit_block.png" alt="'._EDIT.'" width="18" /></a> <a href="' . NW_MODULE_URL . '/admin/index.php?op=delete&amp;storyid='.$storyid.'"><img src="' . NW_MODULE_URL . '/images/delete_block.png" alt="'._DELETE.'" width="20" /></a>';
             } else {
        	        $news['admin'] = '';
             }
@@ -202,7 +240,6 @@ function nw_b_news_latestnews_show($options)
         	}
 
 			if ($options[21] == 1) {
-//            $block['morelink'] = '&nbsp;<a href="' . NW_MODULE_URL . '/index.php?storytopic=0&start='.$limit.'">'._MB_NW_NW_MORE_STORIES.'</A> ';
               $block['morelink'] = '&nbsp;<a href="' . NW_MODULE_URL . '/index.php ">'._MB_NW_MORE_STORIES.'</A> ';
         	}
             

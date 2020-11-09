@@ -35,7 +35,6 @@
  * @copyright (c) The Xoops Project - www.xoops.org
  *
  * Parameters received by this page :
- * @page_param 	int		storytopic 					Topic's ID
  * @page_param	int		topic_id					Topic's ID
  * @page_param	int		storynum					Number of news per page
  * @page_param	int		start						First news to display
@@ -85,23 +84,19 @@ include_once NW_MODULE_PATH . '/class/class.newstopic.php';
 include_once NW_MODULE_PATH . '/include/functions.php';
 include_once XOOPS_ROOT_PATH . '/class/tree.php';
 
-$storytopic=0;
-if(isset($_GET['storytopic'])) {
-	$storytopic=intval($_GET['storytopic']);
-} else {
-	if(isset($_GET['topic_id'])) {
-		$storytopic=intval($_GET['topic_id']);
-	}
-}
+$topic_id=0;
+if(isset($_GET['topic_id'])) {
+	$topic_id=intval($_GET['topic_id']);
+} 
 
-if ($storytopic) {
+if ($topic_id) {
     $groups = is_object($xoopsUser) ? $xoopsUser->getGroups() : XOOPS_GROUP_ANONYMOUS;
     $gperm_handler =& xoops_gethandler('groupperm');
-    if (!$gperm_handler->checkRight('nw_view', $storytopic, $groups, $xoopsModule->getVar('mid'))) {
+    if (!$gperm_handler->checkRight('nw_view', $topic_id, $groups, $xoopsModule->getVar('mid'))) {
         redirect_header(NW_MODULE_URL . '/index.php', 3, _NOPERM);
         exit();
     }
-	$xoopsOption['storytopic'] = $storytopic;
+	$xoopsOption['storytopic'] = $topic_id;
 } else {
 	$xoopsOption['storytopic'] = 0;
 }
@@ -161,7 +156,7 @@ if ($showclassic) {
 
 		$allTopics = $xt->getAllTopics($xoopsModuleConfig['restrictindex']);
 		$topic_tree = new XoopsObjectTree($allTopics, 'topic_id', 'topic_pid');
-		$topic_select = $topic_tree->makeSelBox('storytopic', 'topic_title', '-- ', $xoopsOption['storytopic'], true);
+		$topic_select = $topic_tree->makeSelBox('topic_id', 'topic_title', '-- ', $xoopsOption['storytopic'], true);
 
         $xoopsTpl->assign('topic_select', $topic_select);
         $storynum_options = '';
@@ -222,7 +217,7 @@ if ($showclassic) {
 	$totalcount = nw_NewsStory::countPublishedByTopic($xoopsOption['storytopic'], $xoopsModuleConfig['restrictindex']);
     if ( $totalcount > $scount ) {
         include_once XOOPS_ROOT_PATH.'/class/pagenav.php';
-		$pagenav = new XoopsPageNav($totalcount, $xoopsOption['storynum'], $start, 'start', 'storytopic='.$xoopsOption['storytopic']);
+		$pagenav = new XoopsPageNav($totalcount, $xoopsOption['storynum'], $start, 'start', 'topic_id='.$xoopsOption['storytopic']);
 		if(nw_isbot()) { 		// A bot is reading the news, we are going to show it all the links so that he can read everything
         	$xoopsTpl->assign('pagenav', $pagenav->renderNav($totalcount));
         } else {

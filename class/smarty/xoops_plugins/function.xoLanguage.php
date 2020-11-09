@@ -15,7 +15,7 @@
  * -------------------------------------------------------------------------------------
  * Usage in xoops template :
  *
- *					<a href="<{xoLanguage tag="lang" language="french"}>" />Français</a>
+ *					<a href="<{xoLanguage tag="lang" language="french"}>" />FranÃ§ais</a>
  *					<a href="<{xoLanguage tag="lang" language="english"}>" />English</a>
  *
  * -------------------------------------------------------------------------------------
@@ -61,13 +61,13 @@ function smarty_function_xoLanguage( $params, &$smarty ) {
 		if ( @!empty($seoOp) ) {
 			switch ($seoOp) {
 				case _MA_NW_SEO_TOPICS:
-					$url .= '?storytopic=' . $seoArg;
+					$url .= '?topic_id=' . $seoArg;
 				break;
 				case _MA_NW_SEO_ARTICLES:
 					$url .= '?storyid=' . $seoArg;
 				break;     
 				case _MA_NW_SEO_PRINT:
-				case 'pdf':
+				case _MA_NW_SEO_PDF:
 			}
 			$url .= $value . "&";
 			unset($value);	
