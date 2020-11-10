@@ -3,7 +3,7 @@
 //  ------------------------------------------------------------------------ //
 //                XOOPS - PHP Content Management System                      //
 //                    Copyright (c) 2000 XOOPS.org                           //
-//                       <http://www.xoops.org/>                             //
+//                       <https://www.xoops.org>                             //
 //  ------------------------------------------------------------------------ //
 //  This program is free software; you can redistribute it and/or modify     //
 //  it under the terms of the GNU General Public License as published by     //
@@ -24,15 +24,14 @@
 //  along with this program; if not, write to the Free Software              //
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA //
 //  ------------------------------------------------------------------------ //
-include_once "../../../mainfile.php";
+require_once dirname(__DIR__, 3) . '/mainfile.php';
 
-define("NW_SUBPREFIX", "nw");
-define("NW_MODULE_DIR_NAME", "xnews");
-define("NW_MODULE_PATH", XOOPS_ROOT_PATH . "/modules/" . NW_MODULE_DIR_NAME);
-define("NW_MODULE_URL", XOOPS_URL . "/modules/" . NW_MODULE_DIR_NAME);
-define("NW_UPLOADS_NEWS_PATH", XOOPS_ROOT_PATH . "/uploads/" . NW_MODULE_DIR_NAME);
-define("NW_TOPICS_FILES_PATH", XOOPS_ROOT_PATH . "/uploads/" . NW_MODULE_DIR_NAME . "/topics");
-define("NW_ATTACHED_FILES_PATH", XOOPS_ROOT_PATH . "/uploads/" . NW_MODULE_DIR_NAME . "/attached");
-define("NW_TOPICS_FILES_URL", XOOPS_URL . "/uploads/" . NW_MODULE_DIR_NAME . "/topics");
-define("NW_ATTACHED_FILES_URL", XOOPS_URL . "/uploads/" . NW_MODULE_DIR_NAME . "/attached");
-?>
+define('NW_SUBPREFIX', 'nw');
+define('NW_MODULE_DIR_NAME', 'xnews');
+define('NW_MODULE_PATH', XOOPS_ROOT_PATH . '/modules/' . NW_MODULE_DIR_NAME);
+define('NW_MODULE_URL', XOOPS_URL . '/modules/' . NW_MODULE_DIR_NAME);
+define('NW_UPLOADS_NEWS_PATH', XOOPS_ROOT_PATH . '/uploads/' . NW_MODULE_DIR_NAME);
+define('NW_TOPICS_FILES_PATH', XOOPS_ROOT_PATH . '/uploads/' . NW_MODULE_DIR_NAME . '/topics');
+define('NW_ATTACHED_FILES_PATH', XOOPS_ROOT_PATH . '/uploads/' . NW_MODULE_DIR_NAME . '/attached');
+define('NW_TOPICS_FILES_URL', XOOPS_URL . '/uploads/' . NW_MODULE_DIR_NAME . '/topics');
+define('NW_ATTACHED_FILES_URL', XOOPS_URL . '/uploads/' . NW_MODULE_DIR_NAME . '/attached');

@@ -1,5 +1,6 @@
 <?php
-$newslettertemplate=<<<contentend
+
+$newslettertemplate = <<<contentend
 Título : %title%
 Tema : %topic_title%
 Redactor : %publisher%
@@ -14,4 +15,3 @@ Leer Más... : %link%
  ----------------------------------------------------------------------------
 
 contentend;
-?>

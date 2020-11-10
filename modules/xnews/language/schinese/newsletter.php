@@ -1,5 +1,6 @@
 <?php
-$newslettertemplate=<<<contentend
+
+$newslettertemplate = <<<contentend
 标题 : %title%
 类别 : %topic_title%
 发布者 : %publisher%
@@ -14,4 +15,3 @@ $newslettertemplate=<<<contentend
  ----------------------------------------------------------------------------
 
 contentend;
-?>

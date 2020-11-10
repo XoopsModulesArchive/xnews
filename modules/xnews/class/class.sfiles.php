@@ -3,7 +3,7 @@
 //  ------------------------------------------------------------------------ //
 //                XOOPS - PHP Content Management System                      //
 //                    Copyright (c) 2000 XOOPS.org                           //
-//                       <http://www.xoops.org/>                             //
+//                       <https://www.xoops.org>                             //
 //  ------------------------------------------------------------------------ //
 //  This program is free software; you can redistribute it and/or modify     //
 //  it under the terms of the GNU General Public License as published by     //
@@ -25,296 +25,293 @@
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA //
 // ------------------------------------------------------------------------- //
 if (!defined('XOOPS_ROOT_PATH')) {
-	die("XOOPS root path not defined");
+    die('XOOPS root path not defined');
 }
 
-include_once NW_MODULE_PATH . "/class/class.mimetype.php";
+require_once NW_MODULE_PATH . '/class/class.mimetype.php';
 
-class nw_sFiles {
-	var $db;
-	var $table;
-	var $fileid;
-	var $filerealname;
-	var $storyid;
-	var $date;
-	var $mimetype;
-	var $downloadname;
-	var $counter;
+class nw_sFiles
+{
+    public $db;
+    public $table;
+    public $fileid;
+    public $filerealname;
+    public $storyid;
+    public $date;
+    public $mimetype;
+    public $downloadname;
+    public $counter;
 
-    function nw_sFiles($fileid=-1)
+    public function __construct($fileid = -1)
     {
-		$this->db =& Database::getInstance();
-        $this->table = $this->db->prefix("nw_stories_files");
-        $this->storyid = 0;
-        $this->filerealname = "";
-        $this->date = 0;
-        $this->mimetype = "";
-        $this->downloadname = "downloadfile";
-        $this->counter = 0;
-        if(is_array($fileid)){
-        	$this->makeFile($fileid);
-        }elseif($fileid != -1){
-        	$this->getFile(intval($fileid));
+        $this->db           = XoopsDatabaseFactory::getDatabaseConnection();
+        $this->table        = $this->db->prefix('nw_stories_files');
+        $this->storyid      = 0;
+        $this->filerealname = '';
+        $this->date         = 0;
+        $this->mimetype     = '';
+        $this->downloadname = 'downloadfile';
+        $this->counter      = 0;
+        if (is_array($fileid)) {
+            $this->makeFile($fileid);
+        } elseif (-1 != $fileid) {
+            $this->getFile((int)$fileid);
         }
-	}
-
-	function createUploadName($folder,$filename, $trimname=false)
-	{
-		$workingfolder=$folder;
-		if(xoops_substr($workingfolder,strlen($workingfolder)-1,1)<>'/') {
-			$workingfolder.='/';
-		}
-		$ext = basename($filename);
-		$ext= explode('.', $ext);
-		$ext= '.'.$ext[count($ext)-1];
-		$true=true;
-		while($true)
-		{
-			$ipbits = explode(".", $_SERVER["REMOTE_ADDR"]);
-			
-  			list($usec, $sec) = explode(" ",microtime());
-
-			$usec = (integer) ($usec * 65536);
-  			$sec = ((integer) $sec) & 0xFFFF;
-
-  			if($trimname) {
-  				$uid = sprintf("%06x%04x%04x",($ipbits[0] << 24) | ($ipbits[1] << 16) | ($ipbits[2] << 8) | $ipbits[3], $sec, $usec);
-  			} else {
-  				$uid = sprintf("%08x-%04x-%04x",($ipbits[0] << 24) | ($ipbits[1] << 16) | ($ipbits[2] << 8) | $ipbits[3], $sec, $usec);
-  			}
-         	if(!file_exists($workingfolder.$uid.$ext))
-         	{
-         		$true=false;
-         	}
-         }
-  		return $uid.$ext;
-	}
-
-    function giveMimetype($filename='')
-    {
-		$nw_cmimetype = new nw_cmimetype();
-		$workingfile=$this->downloadname;
-		if(xoops_trim($filename)!='') {
-			$workingfile=$filename;
-			return $nw_cmimetype->getType($workingfile);
-		} else {
-			return '';
-		}
     }
 
-    function getAllbyStory($storyid)
+    public function createUploadName($folder, $filename, $trimname = false)
     {
-       $ret = array();
-       $sql = "SELECT * FROM ".$this->table." WHERE storyid=".intval($storyid);
-       $result = $this->db->query($sql);
-       while( $myrow = $this->db->fetchArray($result)) {
-			$ret[] = new nw_sFiles($myrow);
-       }
-       return $ret;
+        $workingfolder = $folder;
+        if ('/' <> xoops_substr($workingfolder, strlen($workingfolder) - 1, 1)) {
+            $workingfolder .= '/';
+        }
+        $ext  = basename($filename);
+        $ext  = explode('.', $ext);
+        $ext  = '.' . $ext[count($ext) - 1];
+        $true = true;
+        while ($true) {
+            $ipbits = explode('.', $_SERVER['REMOTE_ADDR']);
+
+            [$usec, $sec] = explode(' ', microtime());
+
+            $usec *= 65536;
+            $sec  = ((integer)$sec) & 0xFFFF;
+
+            if ($trimname) {
+                $uid = sprintf('%06x%04x%04x', ($ipbits[0] << 24) | ($ipbits[1] << 16) | ($ipbits[2] << 8) | $ipbits[3], $sec, $usec);
+            } else {
+                $uid = sprintf('%08x-%04x-%04x', ($ipbits[0] << 24) | ($ipbits[1] << 16) | ($ipbits[2] << 8) | $ipbits[3], $sec, $usec);
+            }
+            if (!file_exists($workingfolder . $uid . $ext)) {
+                $true = false;
+            }
+        }
+        return $uid . $ext;
     }
 
-    function getFile($id)
+    public function giveMimetype($filename = '')
     {
-       $sql = "SELECT * FROM ".$this->table." WHERE fileid=".intval($id);
-       $array = $this->db->fetchArray($this->db->query($sql));
-       $this->makeFile($array);
+        $nw_cmimetype = new nw_cmimetype();
+        $workingfile  = $this->downloadname;
+        if ('' != xoops_trim($filename)) {
+            $workingfile = $filename;
+            return $nw_cmimetype->getType($workingfile);
+        } else {
+            return '';
+        }
     }
 
-    function makeFile($array)
+    public function getAllbyStory($storyid)
     {
-       foreach($array as $key=>$value) {
-			$this->$key = $value;
-       }
+        $ret    = [];
+        $sql    = 'SELECT * FROM ' . $this->table . ' WHERE storyid=' . (int)$storyid;
+        $result = $this->db->query($sql);
+        while (false !== ($myrow = $this->db->fetchArray($result))) {
+            $ret[] = new nw_sFiles($myrow);
+        }
+        return $ret;
     }
 
-    function store()
+    public function getFile($id)
     {
-       $myts =& MyTextSanitizer::getInstance();
-       $fileRealName = $myts->addSlashes($this->filerealname);
-       $downloadname = $myts->addSlashes($this->downloadname);
-       $date = time();
-       $mimetype = $myts->addSlashes($this->mimetype);
-       $counter = intval($this->counter);
-       $storyid = intval($this->storyid);
-
-       if(!isset($this->fileid)) {
-			$newid = intval($this->db->genId($this->table."_fileid_seq"));
-            $sql = "INSERT INTO ".$this->table." (fileid, storyid, filerealname, date, mimetype, downloadname, counter) "."VALUES (".$newid.",".$storyid.",'".$fileRealName."','".$date."','".$mimetype."','".$downloadname."',".$counter.")";
-            $this->fileid=$newid;
-       } else {
-            $sql = "UPDATE ".$this->table." SET storyid=".$storyid.",filerealname='".$fileRealName."',date=".$date.",mimetype='".$mimetype."',downloadname='".$downloadname."',counter=".$counter." WHERE fileid=".$this->getFileid();
-       }
-       if(!$result = $this->db->query($sql)) {
-			return false;
-       }
-       return true;
+        $sql   = 'SELECT * FROM ' . $this->table . ' WHERE fileid=' . (int)$id;
+        $array = $this->db->fetchArray($this->db->query($sql));
+        $this->makeFile($array);
     }
 
-	function delete($workdir=NW_ATTACHED_FILES_PATH)
+    public function makeFile($array)
     {
-		$sql = "DELETE FROM ".$this->table." WHERE fileid=".$this->getFileid();
-		if(!$result = $this->db->query($sql)) {
-			return false;
-		}
-		if (file_exists($workdir."/".$this->downloadname)) {
-			unlink($workdir . "/" . $this->downloadname);
-			//DNPROSSI - Added thumb deletion
-			if ( strstr($this->getMimetype(), 'image') ) {
-				unlink($workdir . "/thumb_" . $this->downloadname);
-			}
-		}
-       	return true;
+        foreach ($array as $key => $value) {
+            $this->$key = $value;
+        }
     }
 
-    function updateCounter()
+    public function store()
     {
-		$sql = "UPDATE ".$this->table." SET counter=counter+1 WHERE fileid=".$this->getFileid();
-		if(!$result = $this->db->queryF($sql)) {
-			return false;
+        $myts         = MyTextSanitizer::getInstance();
+        $fileRealName = $myts->addSlashes($this->filerealname);
+        $downloadname = $myts->addSlashes($this->downloadname);
+        $date         = time();
+        $mimetype     = $myts->addSlashes($this->mimetype);
+        $counter      = (int)$this->counter;
+        $storyid      = (int)$this->storyid;
+
+        if (!isset($this->fileid)) {
+            $newid        = (int)$this->db->genId($this->table . '_fileid_seq');
+            $sql          = 'INSERT INTO ' . $this->table . ' (fileid, storyid, filerealname, date, mimetype, downloadname, counter) ' . 'VALUES (' . $newid . ',' . $storyid . ",'" . $fileRealName . "','" . $date . "','" . $mimetype . "','" . $downloadname . "'," . $counter . ')';
+            $this->fileid = $newid;
+        } else {
+            $sql = 'UPDATE ' . $this->table . ' SET storyid=' . $storyid . ",filerealname='" . $fileRealName . "',date=" . $date . ",mimetype='" . $mimetype . "',downloadname='" . $downloadname . "',counter=" . $counter . ' WHERE fileid=' . $this->getFileid();
+        }
+        if (!$result = $this->db->query($sql)) {
+            return false;
         }
         return true;
     }
 
-	// ****************************************************************************************************************
-	// All the Sets
-	// ****************************************************************************************************************
-    function setFileRealName($filename)
+    public function delete($workdir = NW_ATTACHED_FILES_PATH)
     {
-		$this->filerealname=$filename;
+        $sql = 'DELETE FROM ' . $this->table . ' WHERE fileid=' . $this->getFileid();
+        if (!$result = $this->db->query($sql)) {
+            return false;
+        }
+        if (file_exists($workdir . '/' . $this->downloadname)) {
+            unlink($workdir . '/' . $this->downloadname);
+            //DNPROSSI - Added thumb deletion
+            if (false !== strpos($this->getMimetype(), 'image')) {
+                unlink($workdir . '/thumb_' . $this->downloadname);
+            }
+        }
+        return true;
     }
 
-    function setStoryid($id)
+    public function updateCounter()
     {
-		$this->storyid=intval($id);
+        $sql = 'UPDATE ' . $this->table . ' SET counter=counter+1 WHERE fileid=' . $this->getFileid();
+        if (!$result = $this->db->queryF($sql)) {
+            return false;
+        }
+        return true;
     }
 
-    function setMimetype($value)
+    // ****************************************************************************************************************
+    // All the Sets
+    // ****************************************************************************************************************
+    public function setFileRealName($filename)
     {
-		$this->mimetype = $value;
+        $this->filerealname = $filename;
     }
 
-    function setDownloadname($value)
+    public function setStoryid($id)
     {
-		$this->downloadname = $value;
+        $this->storyid = (int)$id;
     }
 
-	// ****************************************************************************************************************
-	// All the Gets
-	// ****************************************************************************************************************
-    function getFileid()
+    public function setMimetype($value)
     {
-		return intval($this->fileid);
+        $this->mimetype = $value;
     }
 
-    function getStoryid()
+    public function setDownloadname($value)
     {
-    	return intval($this->storyid);
+        $this->downloadname = $value;
     }
 
-    function getCounter()
+    // ****************************************************************************************************************
+    // All the Gets
+    // ****************************************************************************************************************
+    public function getFileid()
     {
-    	return intval($this->counter);
+        return (int)$this->fileid;
     }
 
-	function getDate()
-	{
-		return intval($this->date);
-	}
-
-    function getFileRealName($format="S")
+    public function getStoryid()
     {
-		$myts =& MyTextSanitizer::getInstance();
-        switch($format)
-        {
-        	case "S":
-            case "Show":
-            	$filerealname=$myts->htmlSpecialChars($this->filerealname);
-				break;
-			case "E":
-        	case "Edit":
-                $filerealname=$myts->htmlSpecialChars($this->filerealname);
+        return (int)$this->storyid;
+    }
+
+    public function getCounter()
+    {
+        return (int)$this->counter;
+    }
+
+    public function getDate()
+    {
+        return (int)$this->date;
+    }
+
+    public function getFileRealName($format = 'S')
+    {
+        $myts = MyTextSanitizer::getInstance();
+        switch ($format) {
+            case 'S':
+            case 'Show':
+                $filerealname = htmlspecialchars($this->filerealname, ENT_QUOTES | ENT_HTML5);
                 break;
-        	case "P":
-        	case "Preview":
-                $filerealname=$myts->htmlSpecialChars($myts->stripSlashesGPC($this->filerealname));
+            case 'E':
+            case 'Edit':
+                $filerealname = htmlspecialchars($this->filerealname, ENT_QUOTES | ENT_HTML5);
                 break;
-        	case "F":
-        	case "InForm":
-                $filerealname=$myts->htmlSpecialChars($myts->stripSlashesGPC($this->filerealname));
+            case 'P':
+            case 'Preview':
+                $filerealname = htmlspecialchars(($this->filerealname), ENT_QUOTES | ENT_HTML5);
+                break;
+            case 'F':
+            case 'InForm':
+                $filerealname = htmlspecialchars(($this->filerealname), ENT_QUOTES | ENT_HTML5);
                 break;
         }
         return $filerealname;
     }
 
-    function getMimetype($format="S")
+    public function getMimetype($format = 'S')
     {
-       $myts =& MyTextSanitizer::getInstance();
-       switch($format){
-			case "S":
-            case "Show":
-                $filemimetype = $myts->htmlSpecialChars($this->mimetype);
+        $myts = MyTextSanitizer::getInstance();
+        switch ($format) {
+            case 'S':
+            case 'Show':
+                $filemimetype = htmlspecialchars($this->mimetype, ENT_QUOTES | ENT_HTML5);
                 break;
-            case "E":
-            case "Edit":
-                $filemimetype = $myts->htmlSpecialChars($this->mimetype);
+            case 'E':
+            case 'Edit':
+                $filemimetype = htmlspecialchars($this->mimetype, ENT_QUOTES | ENT_HTML5);
                 break;
-            case "P":
-            case "Preview":
-                $filemimetype = $myts->htmlSpecialChars($myts->stripSlashesGPC($this->mimetype));
+            case 'P':
+            case 'Preview':
+                $filemimetype = htmlspecialchars(($this->mimetype), ENT_QUOTES | ENT_HTML5);
                 break;
-            case "F":
-            case "InForm":
-                $filemimetype = $myts->htmlSpecialChars($myts->stripSlashesGPC($this->mimetype));
+            case 'F':
+            case 'InForm':
+                $filemimetype = htmlspecialchars(($this->mimetype), ENT_QUOTES | ENT_HTML5);
                 break;
-       }
-       return $filemimetype;
+        }
+        return $filemimetype;
     }
 
-    function getDownloadname($format="S")
+    public function getDownloadname($format = 'S')
     {
-       $myts =& MyTextSanitizer::getInstance();
-       switch($format){
-			case "S":
-            case "Show":
-            	$filedownname = $myts->htmlSpecialChars($this->downloadname);
+        $myts = MyTextSanitizer::getInstance();
+        switch ($format) {
+            case 'S':
+            case 'Show':
+                $filedownname = htmlspecialchars($this->downloadname, ENT_QUOTES | ENT_HTML5);
                 break;
-            case "E":
-            case "Edit":
-                $filedownname = $myts->htmlSpecialChars($this->downloadname);
+            case 'E':
+            case 'Edit':
+                $filedownname = htmlspecialchars($this->downloadname, ENT_QUOTES | ENT_HTML5);
                 break;
-            case "P":
-            case "Preview":
-                $filedownname = $myts->htmlSpecialChars($myts->stripSlashesGPC($this->downloadname));
+            case 'P':
+            case 'Preview':
+                $filedownname = htmlspecialchars(($this->downloadname), ENT_QUOTES | ENT_HTML5);
                 break;
-            case "F":
-            case "InForm":
-                $filedownname = $myts->htmlSpecialChars($myts->stripSlashesGPC($this->downloadname));
+            case 'F':
+            case 'InForm':
+                $filedownname = htmlspecialchars(($this->downloadname), ENT_QUOTES | ENT_HTML5);
                 break;
-       }
-       return $filedownname;
+        }
+        return $filedownname;
     }
 
     // Deprecated
-    function getCountbyStory($storyid)
+    public function getCountbyStory($storyid)
     {
-       $sql = "SELECT count(fileid) as cnt FROM ".$this->table." WHERE storyid=".intval($storyid)."";
-       $result = $this->db->query($sql);
-       $myrow = $this->db->fetchArray($result);
-       return $myrow['cnt'];
+        $sql    = 'SELECT count(fileid) as cnt FROM ' . $this->table . ' WHERE storyid=' . (int)$storyid . '';
+        $result = $this->db->query($sql);
+        $myrow  = $this->db->fetchArray($result);
+        return $myrow['cnt'];
     }
 
-    function getCountbyStories($stories)
+    public function getCountbyStories($stories)
     {
-		$ret=array();
-    	if(count($stories)>0) {
-			$sql = "SELECT storyid, count(fileid) as cnt FROM ".$this->table." WHERE storyid IN (";
-        	$sql .= implode(',', $stories).") GROUP BY storyid";
-	       	$result = $this->db->query($sql);
-	       	while( $myrow = $this->db->fetchArray($result)) {
-	    		$ret[$myrow['storyid']]=$myrow['cnt'];
-	       	}
-       	}
-       	return $ret;
+        $ret = [];
+        if (count($stories) > 0) {
+            $sql    = 'SELECT storyid, count(fileid) as cnt FROM ' . $this->table . ' WHERE storyid IN (';
+            $sql    .= implode(',', $stories) . ') GROUP BY storyid';
+            $result = $this->db->query($sql);
+            while (false !== ($myrow = $this->db->fetchArray($result))) {
+                $ret[$myrow['storyid']] = $myrow['cnt'];
+            }
+        }
+        return $ret;
     }
 }
-?>

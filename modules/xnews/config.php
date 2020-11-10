@@ -1,7 +1,7 @@
 <?php
 //  ------------------------------------------------------------------------ //
 //                  Copyright (c) 2005-2006 Instant Zero                     //
-//                     <http://xoops.instant-zero.com/>                      //
+//                     <http://xoops.instant-zero.com>                      //
 // ------------------------------------------------------------------------- //
 //  This program is free software; you can redistribute it and/or modify     //
 //  it under the terms of the GNU General Public License as published by     //
@@ -22,11 +22,11 @@
 //  along with this program; if not, write to the Free Software              //
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA //
 //  ------------------------------------------------------------------------ //
-$cfg = array();
+$cfg = [];
 /**
  * How many items do you want to display in the Summary table visible in the article's page ?
  */
-$cfg['article_summary_items_count'] = isset($xoopsModuleConfig['storyhome']) ? $xoopsModuleConfig['storyhome'] : 10;
+$cfg['article_summary_items_count'] = $xoopsModuleConfig['storyhome'] ?? 10;
 
 /**
  * Auto generate meta keywords ?
@@ -43,11 +43,10 @@ $cfg['meta_keywords_count'] = 20;
  */
 $cfg['meta_keywords_order'] = 0;
 
-
 /**
  * Does the module searches inside its own comments ?
  */
- $cfg['config_search_comments'] = true;
+$cfg['config_search_comments'] = true;
 
 /**
  * Only enable registred users to rate news ?
@@ -68,4 +67,3 @@ $cfg['use_fun_menu'] = false;
  * Create a clickable path from the root to the current topic (if we are viewing a topic) ?
  */
 $cfg['create_clickable_path'] = false;
-?>

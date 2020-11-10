@@ -2,7 +2,7 @@
 //  ------------------------------------------------------------------------ //
 //                XOOPS - PHP Content Management System                      //
 //                  Copyright (c) 2005-2006 Instant Zero                     //
-//                     <http://xoops.instant-zero.com/>                      //
+//                     <http://xoops.instant-zero.com>                      //
 //  ------------------------------------------------------------------------ //
 //  This program is free software; you can redistribute it and/or modify     //
 //  it under the terms of the GNU General Public License as published by     //
@@ -72,127 +72,133 @@
  *															string	published		Date of publication formated (according to user's prefs)
  *															int		rating			Rating for this news
  */
-include_once 'header.php';
-include_once NW_MODULE_PATH . '/class/class.newsstory.php';
-include_once NW_MODULE_PATH . '/class/class.newstopic.php';
-include_once NW_MODULE_PATH . '/class/class.sfiles.php';
-include_once NW_MODULE_PATH . '/include/functions.php';
+require_once __DIR__ . '/header.php';
+require_once NW_MODULE_PATH . '/class/class.newsstory.php';
+require_once NW_MODULE_PATH . '/class/class.newstopic.php';
+require_once NW_MODULE_PATH . '/class/class.sfiles.php';
+require_once NW_MODULE_PATH . '/include/functions.php';
 global $xoopsUser;
 
-if (file_exists(NW_MODULE_PATH . '/language/'.$xoopsConfig['language'].'/modinfo.php')) {
-	include_once NW_MODULE_PATH . '/language/'.$xoopsConfig['language'].'/modinfo.php';
+if (file_exists(NW_MODULE_PATH . '/language/' . $xoopsConfig['language'] . '/modinfo.php')) {
+    require_once NW_MODULE_PATH . '/language/' . $xoopsConfig['language'] . '/modinfo.php';
 } else {
-	include_once NW_MODULE_PATH . '/language/english/modinfo.php';
+    require_once NW_MODULE_PATH . '/language/english/modinfo.php';
 }
 
-$uid= (isset($_GET['uid'])) ? intval($_GET['uid']) : 0;
+$uid = (isset($_GET['uid'])) ? (int)$_GET['uid'] : 0;
 if (empty($uid)) {
-    redirect_header('index.php',2,_ERRORS);
+    redirect_header('index.php', 2, _ERRORS);
     exit();
 }
 
-if(!nw_getmoduleoption('newsbythisauthor', NW_MODULE_DIR_NAME)) {
-    redirect_header('index.php',2,_ERRORS);
+if (!nw_getmoduleoption('newsbythisauthor', NW_MODULE_DIR_NAME)) {
+    redirect_header('index.php', 2, _ERRORS);
     exit();
 }
 
-$myts =& MyTextSanitizer::getInstance();
-$articles = new nw_NewsStory();
-$xoopsOption['template_main'] = 'nw_news_by_this_author.html';
-include_once XOOPS_ROOT_PATH.'/header.php';
+$myts                                    = MyTextSanitizer::getInstance();
+$articles                                = new nw_NewsStory();
+$GLOBALS['xoopsOption']['template_main'] = 'nw_news_by_this_author.html';
+require_once XOOPS_ROOT_PATH . '/header.php';
 
-$dateformat=nw_getmoduleoption('dateformat', NW_MODULE_DIR_NAME);
-$infotips=nw_getmoduleoption('infotips', NW_MODULE_DIR_NAME);
-$thisuser = new XoopsUser($uid);
+$dateformat = nw_getmoduleoption('dateformat', NW_MODULE_DIR_NAME);
+$infotips   = nw_getmoduleoption('infotips', NW_MODULE_DIR_NAME);
+$thisuser   = new XoopsUser($uid);
 
-switch($xoopsModuleConfig['displayname']) {
-	case 1:		// Username
-		$authname=$thisuser->getVar('uname');
-		break;
+switch ($xoopsModuleConfig['displayname']) {
+    case 1:        // Username
+        $authname = $thisuser->getVar('uname');
+        break;
 
-	case 2:		// Display full name (if it is not empty)
-		if(xoops_trim($thisuser->getVar('name')) == '') {
-			$authname=$thisuser->getVar('uname');
-		} else {
-			$authname=$thisuser->getVar('name');
-		}
-		break;
+    case 2:        // Display full name (if it is not empty)
+        if ('' == xoops_trim($thisuser->getVar('name'))) {
+            $authname = $thisuser->getVar('uname');
+        } else {
+            $authname = $thisuser->getVar('name');
+        }
+        break;
 
-	case 3:		// Nothing
-		$authname='';
-		break;
+    case 3:        // Nothing
+        $authname = '';
+        break;
 }
-$xoopsTpl->assign('lang_page_title',_MI_NW_NEWSBYTHISAUTHOR.' - ' . $authname);
-$xoopsTpl->assign('lang_nw_by_this_author',_MI_NW_NEWSBYTHISAUTHOR);
-$xoopsTpl->assign('author_id',$uid);
-$xoopsTpl->assign('user_avatarurl', XOOPS_URL.'/uploads/'.$thisuser->getVar('user_avatar'));
-$xoopsTpl->assign('author_name',$authname);
-$xoopsTpl->assign('lang_date',_MA_NW_DATE);
-$xoopsTpl->assign('lang_hits',_MA_NW_VIEWS);
-$xoopsTpl->assign('lang_title',_MA_NW_TITLE);
-$xoopsTpl->assign('nw_rating',nw_getmoduleoption('ratenews', NW_MODULE_DIR_NAME));
-$xoopsTpl->assign('lang_rating',_MA_NW_RATING);
-$xoopsTpl->assign('author_name_with_link',sprintf("<a href='%s'>%s</a>",XOOPS_URL.'/userinfo.php?uid='.$uid,$authname));
+$xoopsTpl->assign('lang_page_title', _MI_NW_NEWSBYTHISAUTHOR . ' - ' . $authname);
+$xoopsTpl->assign('lang_nw_by_this_author', _MI_NW_NEWSBYTHISAUTHOR);
+$xoopsTpl->assign('author_id', $uid);
+$xoopsTpl->assign('user_avatarurl', XOOPS_URL . '/uploads/' . $thisuser->getVar('user_avatar'));
+$xoopsTpl->assign('author_name', $authname);
+$xoopsTpl->assign('lang_date', _MA_NW_DATE);
+$xoopsTpl->assign('lang_hits', _MA_NW_VIEWS);
+$xoopsTpl->assign('lang_title', _MA_NW_TITLE);
+$xoopsTpl->assign('nw_rating', nw_getmoduleoption('ratenews', NW_MODULE_DIR_NAME));
+$xoopsTpl->assign('lang_rating', _MA_NW_RATING);
+$xoopsTpl->assign('author_name_with_link', sprintf("<a href='%s'>%s</a>", XOOPS_URL . '/userinfo.php?uid=' . $uid, $authname));
 
-$oldtopic=-1;
-$oldtopictitle='';
-$oldtopiccolor='';
-$articlelist=array();
-$articlestpl=array();
-$articlelist=$articles->getAllPublishedByAuthor($uid,$xoopsModuleConfig['restrictindex'],false);
-$articlescount=count($articlelist);
-$xoopsTpl->assign('articles_count',$articlescount);
+$oldtopic      = -1;
+$oldtopictitle = '';
+$oldtopiccolor = '';
+$articlelist   = [];
+$articlestpl   = [];
+$articlelist   = $articles->getAllPublishedByAuthor($uid, $xoopsModuleConfig['restrictindex'], false);
+$articlescount = count($articlelist);
+$xoopsTpl->assign('articles_count', $articlescount);
 $count_articles = $count_reads = 0;
 
 // DNPROSSI SEO
 $seo_enabled = nw_getmoduleoption('seo_enable', NW_MODULE_DIR_NAME);
 
-if($articlescount>0) {
-	foreach ($articlelist as $article) {
-		if($oldtopic!=$article['topicid']) {
-			if(count($articlestpl)>0) {
-				// DNPROSSI SEO
-				$cat_path = '';
-				if ( $seo_enabled != 0 ) $cat_path = nw_remove_accents($oldtopictitle);
-			    $topic_link = "<a href='" . nw_seo_UrlGenerator(_MA_NW_SEO_TOPICS, $oldtopic, $cat_path) . "'>" . $oldtopictitle . "</a>";
-				$xoopsTpl->append('topics',array('topic_id'=>$oldtopic, 'topic_count_articles' => sprintf(_AM_NW_TOTAL, $count_articles), 'topic_count_reads' => $count_reads, 'topic_color'=>$oldtopiccolor, 'topic_title'=>$oldtopictitle, 'topic_link'=> $topic_link, 'news'=>$articlestpl));
-			}
-			$oldtopic=$article['topicid'];
-			$oldtopictitle=$article['topic_title'];
-			$oldtopiccolor='#'.$myts->displayTarea($article['topic_color']);
-			$articlestpl = array();
-			$count_articles = $count_reads = 0;
-		}
-		$htmltitle='';
-		if($infotips>0) {
-			$htmltitle = ' title="' . nw_make_infotips($article['hometext']) . '"';
-		}
-		$count_articles++;
-		$count_reads += $article['counter'];
-		// DNPROSSI SEO
-		$story_path = '';
-	    if ( $seo_enabled != 0 ) $story_path = nw_remove_accents($article['title']);
-		$storyTitle = "<a href='" . nw_seo_UrlGenerator(_MA_NW_SEO_ARTICLES, $article['storyid'], $story_path) . "' " . $htmltitle . ">" . $article['title'] . "</a>";
-		$articlestpl[] = array(
-			'id'=>$article['storyid'],
-			'hometext'=>$article['hometext'],
-			'title'=>$article['title'],
-			'hits'=>$article['counter'],
-			'created'=>formatTimestamp($article['created'],$dateformat),
-			'article_link'=>$storyTitle,
-			'published'=>formatTimestamp($article['published'],$dateformat),
-			'rating' => $article['rating']
-		);
-	}
+if ($articlescount > 0) {
+    foreach ($articlelist as $article) {
+        if ($oldtopic != $article['topicid']) {
+            if (count($articlestpl) > 0) {
+                // DNPROSSI SEO
+                $cat_path = '';
+                if (0 != $seo_enabled) {
+                    $cat_path = nw_remove_accents($oldtopictitle);
+                }
+                $topic_link = "<a href='" . nw_seo_UrlGenerator(_MA_NW_SEO_TOPICS, $oldtopic, $cat_path) . "'>" . $oldtopictitle . '</a>';
+                $xoopsTpl->append('topics', ['topic_id' => $oldtopic, 'topic_count_articles' => sprintf(_AM_NW_TOTAL, $count_articles), 'topic_count_reads' => $count_reads, 'topic_color' => $oldtopiccolor, 'topic_title' => $oldtopictitle, 'topic_link' => $topic_link, 'news' => $articlestpl]);
+            }
+            $oldtopic       = $article['topicid'];
+            $oldtopictitle  = $article['topic_title'];
+            $oldtopiccolor  = '#' . $myts->displayTarea($article['topic_color']);
+            $articlestpl    = [];
+            $count_articles = $count_reads = 0;
+        }
+        $htmltitle = '';
+        if ($infotips > 0) {
+            $htmltitle = ' title="' . nw_make_infotips($article['hometext']) . '"';
+        }
+        $count_articles++;
+        $count_reads += $article['counter'];
+        // DNPROSSI SEO
+        $story_path = '';
+        if (0 != $seo_enabled) {
+            $story_path = nw_remove_accents($article['title']);
+        }
+        $storyTitle    = "<a href='" . nw_seo_UrlGenerator(_MA_NW_SEO_ARTICLES, $article['storyid'], $story_path) . "' " . $htmltitle . '>' . $article['title'] . '</a>';
+        $articlestpl[] = [
+            'id'           => $article['storyid'],
+            'hometext'     => $article['hometext'],
+            'title'        => $article['title'],
+            'hits'         => $article['counter'],
+            'created'      => formatTimestamp($article['created'], $dateformat),
+            'article_link' => $storyTitle,
+            'published'    => formatTimestamp($article['published'], $dateformat),
+            'rating'       => $article['rating'],
+        ];
+    }
 }
 
 // DNPROSSI SEO
 $cat_path = '';
-if ( $seo_enabled != 0 ) $cat_path = nw_remove_accents($article['topic_title']);
-$topic_link = "<a href='" . nw_seo_UrlGenerator(_MA_NW_SEO_TOPICS, $oldtopic, $cat_path) . "'>" . $article['topic_title'] . "</a>";
+if (0 != $seo_enabled) {
+    $cat_path = nw_remove_accents($article['topic_title']);
+}
+$topic_link = "<a href='" . nw_seo_UrlGenerator(_MA_NW_SEO_TOPICS, $oldtopic, $cat_path) . "'>" . $article['topic_title'] . '</a>';
 
-$xoopsTpl->append('topics',array('topic_id'=>$oldtopic, 'topic_title'=>$oldtopictitle, 'topic_link'=> $topic_link, 'news'=>$articlestpl));
-$xoopsTpl->assign('xoops_pagetitle', _MI_NW_NEWSBYTHISAUTHOR . ' - ' .$authname . ' - ' . $myts->htmlSpecialChars($xoopsModule->name()) );
+$xoopsTpl->append('topics', ['topic_id' => $oldtopic, 'topic_title' => $oldtopictitle, 'topic_link' => $topic_link, 'news' => $articlestpl]);
+$xoopsTpl->assign('xoops_pagetitle', _MI_NW_NEWSBYTHISAUTHOR . ' - ' . $authname . ' - ' . htmlspecialchars($xoopsModule->name(), ENT_QUOTES | ENT_HTML5));
 $xoopsTpl->assign('advertisement', nw_getmoduleoption('advertisement', NW_MODULE_DIR_NAME));
 
 /**
@@ -200,13 +206,12 @@ $xoopsTpl->assign('advertisement', nw_getmoduleoption('advertisement', NW_MODULE
  */
 nw_CreateMetaDatas();
 
-$meta_description = _MI_NW_NEWSBYTHISAUTHOR . ' - ' .$authname . ' - ' . $myts->htmlSpecialChars($xoopsModule->name());
-if(isset($xoTheme) && is_object($xoTheme)) {
-	$xoTheme->addMeta( 'meta', 'description', $meta_description);
-} else {	// Compatibility for old Xoops versions
-	$xoopsTpl->assign('xoops_meta_description', $meta_description);
+$meta_description = _MI_NW_NEWSBYTHISAUTHOR . ' - ' . $authname . ' - ' . htmlspecialchars($xoopsModule->name(), ENT_QUOTES | ENT_HTML5);
+if (isset($xoTheme) && is_object($xoTheme)) {
+    $xoTheme->addMeta('meta', 'description', $meta_description);
+} else {    // Compatibility for old Xoops versions
+    $xoopsTpl->assign('xoops_meta_description', $meta_description);
 }
 
-include_once XOOPS_ROOT_PATH.'/include/comment_view.php';
-include_once XOOPS_ROOT_PATH.'/footer.php';
-?>
+require_once XOOPS_ROOT_PATH . '/include/comment_view.php';
+require_once XOOPS_ROOT_PATH . '/footer.php';

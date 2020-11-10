@@ -3,7 +3,7 @@
 //  ------------------------------------------------------------------------ //
 //                XOOPS - PHP Content Management System                      //
 //                    Copyright (c) 2000 XOOPS.org                           //
-//                       <http://www.xoops.org/>                             //
+//                       <https://www.xoops.org>                             //
 //  ------------------------------------------------------------------------ //
 //  This program is free software; you can redistribute it and/or modify     //
 //  it under the terms of the GNU General Public License as published by     //
@@ -27,22 +27,23 @@
 
 // comment callback functions
 if (!defined('XOOPS_ROOT_PATH')) {
-	die("XOOPS root path not defined");
+    die('XOOPS root path not defined');
 }
 
-include_once NW_MODULE_PATH . '/class/class.newsstory.php';
+require_once NW_MODULE_PATH . '/class/class.newsstory.php';
 
-function nw_com_update($story_id, $total_num){
-	$story_id = intval($story_id);
-	$total_num = intval($total_num);
-	$article = new nw_NewsStory($story_id);
-	if (!$article->updateComments($total_num)) {
-		return false;
-	}
-	return true;
+function nw_com_update($story_id, $total_num)
+{
+    $story_id  = (int)$story_id;
+    $total_num = (int)$total_num;
+    $article   = new nw_NewsStory($story_id);
+    if (!$article->updateComments($total_num)) {
+        return false;
+    }
+    return true;
 }
 
-function nw_com_approve(&$comment){
-	// notification mail here
+function nw_com_approve(&$comment)
+{
+    // notification mail here
 }
-?>

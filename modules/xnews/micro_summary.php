@@ -2,7 +2,7 @@
 //  ------------------------------------------------------------------------ //
 //                XOOPS - PHP Content Management System                      //
 //                  Copyright (c) 2005-2006 Instant Zero                     //
-//                     <http://xoops.instant-zero.com/>                      //
+//                     <http://xoops.instant-zero.com>                      //
 //  ------------------------------------------------------------------------ //
 //  This program is free software; you can redistribute it and/or modify     //
 //  it under the terms of the GNU General Public License as published by     //
@@ -37,23 +37,22 @@
  * NOTE : If you use this code, please make credit.
  *
  */
-include_once 'header.php';
-include_once NW_MODULE_PATH . '/class/class.newsstory.php';
-include_once NW_MODULE_PATH . '/include/functions.php';
-if(!nw_getmoduleoption('firefox_microsummaries', NW_MODULE_DIR_NAME)) {
-	exit();
+require_once __DIR__ . '/header.php';
+require_once NW_MODULE_PATH . '/class/class.newsstory.php';
+require_once NW_MODULE_PATH . '/include/functions.php';
+if (!nw_getmoduleoption('firefox_microsummaries', NW_MODULE_DIR_NAME)) {
+    exit();
 }
-$story = new nw_NewsStory();
+$story      = new nw_NewsStory();
 $restricted = nw_getmoduleoption('restrictindex', NW_MODULE_DIR_NAME);
-$sarray = array();
+$sarray     = [];
 // Get the last news from all topics according to the module's restrictions
-$sarray = $story->getAllPublished(1, 0, $restricted, 0);
-if (count($sarray)>0) {
-	$laststory = null;
-	$laststory = $sarray[0];
-	if(is_object($laststory)) {
-		header ('Content-Type:text;');
-		echo $laststory->title(). ' - '.$xoopsConfig['sitename'];
-	}
+$sarray = $story::getAllPublished(1, 0, $restricted, 0);
+if (count($sarray) > 0) {
+    $laststory = null;
+    $laststory = $sarray[0];
+    if (is_object($laststory)) {
+        header('Content-Type:text;');
+        echo $laststory->title() . ' - ' . $xoopsConfig['sitename'];
+    }
 }
-?>

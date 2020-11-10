@@ -1,21 +1,22 @@
 <?php
-function adminmenu($currentoption = 0, $breadcrumb = '')
+
+function adminmenu($currentoption = 0, $breadcrumb = ''): void
 {
- 	global $xoopsModule, $xoopsConfig;
+    global $xoopsModule, $xoopsConfig;
 
-	include XNI_MODULE_PATH . '/config.php';
-	if (file_exists(XNI_MODULE_PATH . '/language/' . $xoopsConfig['language'] . '/modinfo.php')) {
-		include_once XNI_MODULE_PATH . '/language/' . $xoopsConfig['language'] . '/modinfo.php';
-	} else {
-		include_once XNI_MODULE_PATH . '/language/english/modinfo.php';
-	}
+    include XNI_MODULE_PATH . '/config.php';
+    if (is_file(XNI_MODULE_PATH . '/language/' . $xoopsConfig['language'] . '/modinfo.php')) {
+        require_once XNI_MODULE_PATH . '/language/' . $xoopsConfig['language'] . '/modinfo.php';
+    } else {
+        require_once XNI_MODULE_PATH . '/language/english/modinfo.php';
+    }
 
-	$tblColors = array('','');
-	if($currentoption>=0) {
-		$tblColors[$currentoption] = 'current';
-	}
+    $tblColors = ['', ''];
+    if ($currentoption >= 0) {
+        $tblColors[$currentoption] = 'current';
+    }
 
-	echo "
+    echo "
 	   	<style type='text/css'>
 			#buttontop { float:left; width:100%; background: #e7e7e7; font-size:93%; line-height:normal; border-top: 1px solid black; border-left: 1px solid black; border-right: 1px solid black; margin: 0; }
 			#buttonbar { float:left; width:100%; background: #e7e7e7 url('" . XNI_MODULE_URL . "/images/bg.png') repeat-x left bottom; font-size:93%; line-height:normal; border-left: 1px solid black; border-right: 1px solid black; margin-bottom: 12px; }
@@ -65,64 +66,77 @@ function adminmenu($currentoption = 0, $breadcrumb = '')
 			}		
 		</style>
     ";
-// | <a href='import.php'>". 'Import' ."</a>
-	echo "<div id='buttontop'>";
-	echo "<table style=\"width: 100%; padding: 0; \" cellspacing=\"0\"><tr>";
-	echo "<td style=\"width: 60%; font-size: 10px; text-align: left; color: #2F5376; padding: 0 6px; line-height: 18px;\"><a href='" . XOOPS_URL . "/modules/system/admin.php?fct=preferences&amp;op=showmod&amp;mod=" . $xoopsModule->getVar("mid") . "'>" . _AM_XNI_PREFERENCES . "</a> | <a href=\"#\">" . _AM_XNI_HELP . "</a> | <a href=\"index.php\">" . _AM_XNI_IMPORT_GOTOINDEX . "</a></td>";
-	echo "<td style=\"width: 40%; font-size: 10px; text-align: right; color: #2F5376; padding: 0 6px; line-height: 18px;\"><b>" . $xoopsModule->name() . "  " . _AM_XNI_MODULEADMIN . "</b></td>";
-	echo '</tr></table>';
-	echo '</div>';
-	echo "<div id='buttonbar'>";
-	echo '<ul>';
-	echo "<li id='" . $tblColors[0] . "'><a href=\"index.php?op=import\"\"><span>". _MI_XNI_IMPORT ."</span></a></li>\n";
-	echo '<li id="' . $tblColors[1] . '"><a href="' . XOOPS_URL . '/modules/system/admin.php?fct=preferences&amp;op=showmod&amp;mod=' . $xoopsModule->getVar("mid") . '"> <span>' . _MI_XNI_PREFERENCES . '</span></a></li>';
-	echo '</ul></div>';
-	echo '<br /><br /><pre>&nbsp;</pre><pre>&nbsp;</pre>';
+    // | <a href='import.php'>". 'Import' ."</a>
+    echo "<div id='buttontop'>";
+    echo '<table style="width: 100%; padding: 0; " cellspacing="0"><tr>';
+    echo "<td style=\"width: 60%; font-size: 10px; text-align: left; color: #2F5376; padding: 0 6px; line-height: 18px;\"><a href='"
+         . XOOPS_URL
+         . '/modules/system/admin.php?fct=preferences&amp;op=showmod&amp;mod='
+         . $xoopsModule->getVar('mid')
+         . "'>"
+         . _AM_XNI_PREFERENCES
+         . '</a> | <a href="#">'
+         . _AM_XNI_HELP
+         . '</a> | <a href="index.php">'
+         . _AM_XNI_IMPORT_GOTOINDEX
+         . '</a></td>';
+    echo '<td style="width: 40%; font-size: 10px; text-align: right; color: #2F5376; padding: 0 6px; line-height: 18px;"><b>' . $xoopsModule->name() . '  ' . _AM_XNI_MODULEADMIN . '</b></td>';
+    echo '</tr></table>';
+    echo '</div>';
+    echo "<div id='buttonbar'>";
+    echo '<ul>';
+    echo "<li id='" . $tblColors[0] . "'><a href=\"index.php?op=import\"\"><span>" . _MI_XNI_IMPORT . "</span></a></li>\n";
+    echo '<li id="' . $tblColors[1] . '"><a href="' . XOOPS_URL . '/modules/system/admin.php?fct=preferences&amp;op=showmod&amp;mod=' . $xoopsModule->getVar('mid') . '"> <span>' . _MI_XNI_PREFERENCES . '</span></a></li>';
+    echo '</ul></div>';
+    echo '<br><br><pre>&nbsp;</pre><pre>&nbsp;</pre>';
 }
 
-function xni_collapsableBar($tablename = '', $iconname = '')
+function xni_collapsableBar($tablename = '', $iconname = ''): void
 {
-
     ?>
-	<script type="text/javascript"><!--
-	function goto_URL(object)
-	{
-		window.location.href = object.options[object.selectedIndex].value;
-	}
+    <script type="text/javascript"><!--
+        function goto_URL(object) {
+            window.location.href = object.options[object.selectedIndex].value;
+        }
 
-	function toggle(id)
-	{
-		if (document.getElementById) { obj = document.getElementById(id); }
-		if (document.all) { obj = document.all[id]; }
-		if (document.layers) { obj = document.layers[id]; }
-		if (obj) {
-			if (obj.style.display == "none") {
-				obj.style.display = "";
-			} else {
-				obj.style.display = "none";
-			}
-		}
-		return false;
-	}
+        function toggle(id) {
+            if (document.getElementById) {
+                obj = document.getElementById(id);
+            }
+            if (document.all) {
+                obj = document.all[id];
+            }
+            if (document.layers) {
+                obj = document.layers[id];
+            }
+            if (obj) {
+                if (obj.style.display == "none") {
+                    obj.style.display = "";
+                } else {
+                    obj.style.display = "none";
+                }
+            }
+            return false;
+        }
 
-	var iconClose = new Image();
-	iconClose.src = '../images/close12.gif';
-	var iconOpen = new Image();
-	iconOpen.src = '../images/open12.gif';
+        var iconClose = new Image();
+        iconClose.src = '../images/close12.gif';
+        var iconOpen = new Image();
+        iconOpen.src = '../images/open12.gif';
 
-	function toggleIcon ( iconName )
-	{
-		if ( document.images[iconName].src == window.iconOpen.src ) {
-			document.images[iconName].src = window.iconClose.src;
-		} else if ( document.images[iconName].src == window.iconClose.src ) {
-			document.images[iconName].src = window.iconOpen.src;
-		}
-		return;
-	}
+        function toggleIcon(iconName) {
+            if (document.images[iconName].src == window.iconOpen.src) {
+                document.images[iconName].src = window.iconClose.src;
+            } else if (document.images[iconName].src == window.iconClose.src) {
+                document.images[iconName].src = window.iconOpen.src;
+            }
+            return;
+        }
 
-	//-->
-	</script>
-	<?php
-	echo "<h4 style=\"color: #2F5376; margin: 6px 0 0 0; \"><a href='#' onClick=\"toggle('" . $tablename . "'); toggleIcon('" . $iconname . "');\">";
+        //-->
+    </script>
+    <?php
+    echo "<h4 style=\"color: #2F5376; margin: 6px 0 0 0; \"><a href='#' onClick=\"toggle('" . $tablename . "'); toggleIcon('" . $iconname . "');\">";
 }
+
 ?>

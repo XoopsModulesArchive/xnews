@@ -1,5 +1,6 @@
 <?php
-$newslettertemplate=<<<contentend
+
+$newslettertemplate = <<<contentend
 عنوان : %title%
 سرفصل : %topic_title%
 فرستنده : %publisher%
@@ -14,4 +15,3 @@ $newslettertemplate=<<<contentend
  ----------------------------------------------------------------------------
 
 contentend;
-?>

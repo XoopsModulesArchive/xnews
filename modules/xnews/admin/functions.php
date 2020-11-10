@@ -3,7 +3,7 @@
 //  ------------------------------------------------------------------------ //
 //                XOOPS - PHP Content Management System                      //
 //                    Copyright (c) 2000 XOOPS.org                           //
-//                       <http://www.xoops.org/>                             //
+//                       <https://www.xoops.org>                             //
 //  ------------------------------------------------------------------------ //
 //  This program is free software; you can redistribute it and/or modify     //
 //  it under the terms of the GNU General Public License as published by     //
@@ -32,29 +32,31 @@
  *
  * NOTE : Please give credits if you copy this code !
  *
- * @package News
- * @author Instant Zero (http://www.instant-zero.com) & Dojo Javscript Toolkit
- * @copyright	(c) Instant Zero - http://www.instant-zero.com
+ * @param int    $currentoption
+ * @param string $breadcrumb
+ * @copyright    (c) Instant Zero - http://www.instant-zero.com
+ * @package          News
+ * @author           Instant Zero (http://www.instant-zero.com) & Dojo Javscript Toolkit
  */
 function adminmenu($currentoption = 0, $breadcrumb = '')
 {
-	global $xoopsModule, $xoopsConfig;
+    global $xoopsModule, $xoopsConfig;
 
-	include NW_MODULE_PATH . '/config.php';
-	if (file_exists(NW_MODULE_PATH . '/language/' . $xoopsConfig['language'] . '/modinfo.php')) {
-		include_once NW_MODULE_PATH . '/language/' . $xoopsConfig['language'] . '/modinfo.php';
-	} else {
-		include_once NW_MODULE_PATH . '/language/english/modinfo.php';
-	}
+    include NW_MODULE_PATH . '/config.php';
+    if (file_exists(NW_MODULE_PATH . '/language/' . $xoopsConfig['language'] . '/modinfo.php')) {
+        require_once NW_MODULE_PATH . '/language/' . $xoopsConfig['language'] . '/modinfo.php';
+    } else {
+        require_once NW_MODULE_PATH . '/language/english/modinfo.php';
+    }
 
-	if(!$cfg['use_fun_menu']) {
-		$tblColors = array('','','','','','','','','');
-		if($currentoption>=0) {
-			$tblColors[$currentoption] = 'current';
-		}
+    if (!$cfg['use_fun_menu']) {
+        $tblColors = ['', '', '', '', '', '', '', '', ''];
+        if ($currentoption >= 0) {
+            $tblColors[$currentoption] = 'current';
+        }
 
-		/* Nice buttons styles */
-		echo "
+        /* Nice buttons styles */
+        echo "
 	    	<style type='text/css'>
     		#buttontop { float:left; width:100%; background: #e7e7e7; font-size:93%; line-height:normal; border-top: 1px solid black; border-left: 1px solid black; border-right: 1px solid black; margin: 0; }
     		#buttonbar { float:left; width:100%; background: #e7e7e7 url('" . NW_MODULE_URL . "/images/bg.png') repeat-x left bottom; font-size:93%; line-height:normal; border-left: 1px solid black; border-right: 1px solid black; margin-bottom: 12px; }
@@ -105,154 +107,173 @@ function adminmenu($currentoption = 0, $breadcrumb = '')
 			</style>
     	";
 
-		echo "<div id='buttontop'>";
-		echo "<table style=\"width: 100%; padding: 0; \" cellspacing=\"0\"><tr>";
-		echo "<td style=\"width: 60%; font-size: 10px; text-align: left; color: #2F5376; padding: 0 6px; line-height: 18px;\"><a href=\"index.php\">" . _AM_NW_INDEX . "</a> | <a class=\"nobutton\" href=\"".XOOPS_URL."/modules/system/admin.php?fct=preferences&amp;op=showmod&amp;mod=".$xoopsModule->getVar('mid')."\">" . _AM_NW_GENERALSET . "</a> | <a href=\"../index.php\">" . _AM_NW_GOTOMOD . "</a> | <a href=\"#\">" . _AM_NW_HELP . "</a> | <a href='index.php?op=verifydb'>". _AM_NW_VERIFY_TABLES ."</a></td>";
-		echo "<td style=\"width: 40%; font-size: 10px; text-align: right; color: #2F5376; padding: 0 6px; line-height: 18px;\"><b>" . $xoopsModule->name() . "  " . _AM_NW_MODULEADMIN . "</b> " . $breadcrumb . "</td>";
-		echo '</tr></table>';
-		echo '</div>';
+        echo "<div id='buttontop'>";
+        echo '<table style="width: 100%; padding: 0; " cellspacing="0"><tr>';
+        echo '<td style="width: 60%; font-size: 10px; text-align: left; color: #2F5376; padding: 0 6px; line-height: 18px;"><a href="index.php">'
+             . _AM_NW_INDEX
+             . '</a> | <a class="nobutton" href="'
+             . XOOPS_URL
+             . '/modules/system/admin.php?fct=preferences&amp;op=showmod&amp;mod='
+             . $xoopsModule->getVar('mid')
+             . '">'
+             . _AM_NW_GENERALSET
+             . '</a> | <a href="../index.php">'
+             . _AM_NW_GOTOMOD
+             . '</a> | <a href="#">'
+             . _AM_NW_HELP
+             . "</a> | <a href='index.php?op=verifydb'>"
+             . _AM_NW_VERIFY_TABLES
+             . '</a></td>';
+        echo '<td style="width: 40%; font-size: 10px; text-align: right; color: #2F5376; padding: 0 6px; line-height: 18px;"><b>' . $xoopsModule->name() . '  ' . _AM_NW_MODULEADMIN . '</b> ' . $breadcrumb . '</td>';
+        echo '</tr></table>';
+        echo '</div>';
 
-		echo "<div id='buttonbar'>";
-		echo '<ul>';
-		echo "<li id='" . $tblColors[0] . "'><a href=\"index.php?op=topicsmanager\"\"><span>"._MI_NW_ADMENU2 ."</span></a></li>\n";
-		echo "<li id='" . $tblColors[1] . "'><a href=\"index.php?op=newarticle\"><span>" . _MI_NW_ADMENU3 . "</span></a></li>\n";
-		echo "<li id='" . $tblColors[2] . "'><a href=\"groupperms.php\"><span>" . _MI_NW_GROUPPERMS . "</span></a></li>\n";
-		echo "<li id='" . $tblColors[3] . "'><a href=\"index.php?op=prune\"><span>" . _MI_NW_PRUNENEWS . "</span></a></li>\n";
-		echo "<li id='" . $tblColors[4] . "'><a href=\"index.php?op=export\"><span>" . _MI_NW_EXPORT . "</span></a></li>\n";
-		echo "<li id='" . $tblColors[5] . "'><a href=\"index.php?op=configurenewsletter\"><span>" . _MI_NW_NEWSLETTER . "</span></a></li>\n";
-		echo "<li id='" . $tblColors[6] . "'><a href=\"index.php?op=stats\"><span>" . _MI_NW_STATS . "</span></a></li>\n";
-		echo "<li id='" . $tblColors[7] . "'><a href=\"index.php?op=metagen\"><span>" . _MI_NW_METAGEN . "</span></a></li>\n";
-		echo "<li id='" . $tblColors[8] . "'><a href='" . XOOPS_URL . "/modules/" . "x" . "news" . "/admin/index.php?op=cloner'><span>" . _MI_NW_CLONER . "</span></a></li>\n";
-		echo '</ul></div>';
-		echo '<br /><br /><pre>&nbsp;</pre><pre>&nbsp;</pre>';
-	} else {
-		?>
-<script
-	type="text/javascript" src="../js/dojo.js"></script>
-<script language="JavaScript" type="text/javascript">
-		dojo.require("dojo.widget.FisheyeList");
-		dojo.hostenv.writeIncludes();
-	</script>
-<script>
-		function load_app(id){
- 			urltogo = new Array("../../system/admin.php?fct=preferences&op=showmod&mod=<?php echo $xoopsModule->getVar('mid'); ?>","../index.php","#","index.php?op=verifydb","index.php?op=topicsmanager","index.php?op=newarticle","groupperms.php","index.php?op=prune","index.php?op=export","index.php?op=configurenewsletter","index.php?op=stats","index.php?op=metagen","index.php?op=cloner");
-    		window.location.href = urltogo[id];
-		}
-	</script>
+        echo "<div id='buttonbar'>";
+        echo '<ul>';
+        echo "<li id='" . $tblColors[0] . "'><a href=\"index.php?op=topicsmanager\"\"><span>" . _MI_NW_ADMENU2 . "</span></a></li>\n";
+        echo "<li id='" . $tblColors[1] . "'><a href=\"index.php?op=newarticle\"><span>" . _MI_NW_ADMENU3 . "</span></a></li>\n";
+        echo "<li id='" . $tblColors[2] . "'><a href=\"groupperms.php\"><span>" . _MI_NW_GROUPPERMS . "</span></a></li>\n";
+        echo "<li id='" . $tblColors[3] . "'><a href=\"index.php?op=prune\"><span>" . _MI_NW_PRUNENEWS . "</span></a></li>\n";
+        echo "<li id='" . $tblColors[4] . "'><a href=\"index.php?op=export\"><span>" . _MI_NW_EXPORT . "</span></a></li>\n";
+        echo "<li id='" . $tblColors[5] . "'><a href=\"index.php?op=configurenewsletter\"><span>" . _MI_NW_NEWSLETTER . "</span></a></li>\n";
+        echo "<li id='" . $tblColors[6] . "'><a href=\"index.php?op=stats\"><span>" . _MI_NW_STATS . "</span></a></li>\n";
+        echo "<li id='" . $tblColors[7] . "'><a href=\"index.php?op=metagen\"><span>" . _MI_NW_METAGEN . "</span></a></li>\n";
+        echo "<li id='" . $tblColors[8] . "'><a href='" . XOOPS_URL . '/modules/' . 'x' . 'news' . "/admin/index.php?op=cloner'><span>" . _MI_NW_CLONER . "</span></a></li>\n";
+        echo '</ul></div>';
+        echo '<br><br><pre>&nbsp;</pre><pre>&nbsp;</pre>';
+    } else {
+        ?>
+        <script
+                type="text/javascript" src="../js/dojo.js"></script>
+        <script language="JavaScript" type="text/javascript">
+            dojo.require
+            "dojo.widget.FisheyeList";
+            dojo.hostenv.writeIncludes();
+        </script>
+        <script>
+            function load_app(id) {
+                urltogo = new Array("../../system/admin.php?fct=preferences&op=showmod&mod=<?php echo $xoopsModule->getVar(
+                    'mid'
+                ); ?>", "../index.php", "#", "index.php?op=verifydb", "index.php?op=topicsmanager", "index.php?op=newarticle", "groupperms.php", "index.php?op=prune", "index.php?op=export", "index.php?op=configurenewsletter", "index.php?op=stats", "index.php?op=metagen", "index.php?op=cloner");
+                window.location.href = urltogo[id];
+            }
+        </script>
 
-<style>
-.dojoHtmlFisheyeListBar {
-	margin: 0 auto;
-	text-align: center;
+        <style>
+            .dojoHtmlFisheyeListBar {
+                margin: 0 auto;
+                text-align: center;
+            }
+
+            .outerbar {
+                background-color: #ffffff;
+                text-align: center;
+                position: relative;
+                left: 0px;
+                top: 0px;
+                width: 100%;
+            }
+        </style>
+
+        <div class="outerbar">
+            <div class="dojo-FisheyeList" dojo:itemWidth="50" dojo:itemHeight="50"
+                 dojo:itemMaxWidth="200" dojo:itemMaxHeight="200"
+                 dojo:orientation="horizontal" dojo:effectUnits="2"
+                 dojo:itemPadding="10" dojo:attachEdge="top" dojo:labelEdge="bottom"
+                 dojo:enableCrappySvgSupport="false">
+
+                <div class="dojo-FisheyeListItem" onClick="load_app(0)"
+                     dojo:iconsrc="../images/options.png"
+                     caption="<?php echo _AM_NW_GENERALSET; ?>"></div>
+                <div class="dojo-FisheyeListItem" onClick="load_app(1);"
+                     dojo:iconsrc="../images/home.png"
+                     caption="<?php echo _AM_NW_GOTOMOD; ?>"></div>
+                <div class="dojo-FisheyeListItem" onClick="load_app(2);"
+                     dojo:iconsrc="../images/help.png" caption="<?php echo _AM_NW_HELP; ?>">
+                </div>
+                <div class="dojo-FisheyeListItem" onClick="load_app(3);"
+                     dojo:iconsrc="../images/maintain.png"
+                     caption="<?php echo _AM_NW_VERIFY_TABLES; ?>"></div>
+                <div class="dojo-FisheyeListItem" onClick="load_app(4);"
+                     dojo:iconsrc="../images/topics.png"
+                     caption="<?php echo _MI_NW_ADMENU2; ?>"></div>
+                <div class="dojo-FisheyeListItem" onClick="load_app(5);"
+                     dojo:iconsrc="../images/articles.png"
+                     dojo:caption="<?php echo _MI_NW_ADMENU3; ?>"></div>
+                <div class="dojo-FisheyeListItem" onClick="load_app(6);"
+                     dojo:iconsrc="../images/permissions.png"
+                     dojo:caption="<?php echo _MI_NW_GROUPPERMS; ?>"></div>
+                <div class="dojo-FisheyeListItem" onClick="load_app(7);"
+                     dojo:iconsrc="../images/purge.png"
+                     dojo:caption="<?php echo _MI_NW_PRUNENEWS; ?>"></div>
+                <div class="dojo-FisheyeListItem" onClick="load_app(8);"
+                     dojo:iconsrc="../images/export.png"
+                     dojo:caption="<?php echo _MI_NW_EXPORT; ?>"></div>
+                <div class="dojo-FisheyeListItem" onClick="load_app(9);"
+                     dojo:iconsrc="../images/newsletter.png"
+                     dojo:caption="<?php echo _MI_NW_NEWSLETTER; ?>"></div>
+                <div class="dojo-FisheyeListItem" onClick="load_app(10);"
+                     dojo:iconsrc="../images/statistics.png"
+                     dojo:caption="<?php echo _MI_NW_STATS; ?>"></div>
+                <div class="dojo-FisheyeListItem" onClick="load_app(11);"
+                     dojo:iconsrc="../images/metagen.png"
+                     dojo:caption="<?php echo _MI_NW_METAGEN; ?>"></div>
+                <div class="dojo-FisheyeListItem" onClick="load_app(12);"
+                     dojo:iconsrc="../images/cloner.png"
+                     dojo:caption="<?php echo _MI_NW_CLONER; ?>"></div>
+
+            </div>
+        </div>
+        <?php
+    }
 }
-
-.outerbar {
-	background-color: #ffffff;
-	text-align: center;
-	position: relative;
-	left: 0px;
-	top: 0px;
-	width: 100%;
-}
-</style>
-
-<div class="outerbar">
-<div class="dojo-FisheyeList" dojo:itemWidth="50" dojo:itemHeight="50"
-	dojo:itemMaxWidth="200" dojo:itemMaxHeight="200"
-	dojo:orientation="horizontal" dojo:effectUnits="2"
-	dojo:itemPadding="10" dojo:attachEdge="top" dojo:labelEdge="bottom"
-	dojo:enableCrappySvgSupport="false">
-
-<div class="dojo-FisheyeListItem" onClick="load_app(0)"
-	dojo:iconsrc="../images/options.png"
-	caption="<?php echo _AM_NW_GENERALSET; ?>"></div>
-<div class="dojo-FisheyeListItem" onClick="load_app(1);"
-	dojo:iconsrc="../images/home.png"
-	caption="<?php echo _AM_NW_GOTOMOD; ?>"></div>
-<div class="dojo-FisheyeListItem" onClick="load_app(2);"
-	dojo:iconsrc="../images/help.png" caption="<?php echo _AM_NW_HELP; ?>">
-</div>
-<div class="dojo-FisheyeListItem" onClick="load_app(3);"
-	dojo:iconsrc="../images/maintain.png"
-	caption="<?php echo _AM_NW_VERIFY_TABLES; ?>"></div>
-<div class="dojo-FisheyeListItem" onClick="load_app(4);"
-	dojo:iconsrc="../images/topics.png"
-	caption="<?php echo _MI_NW_ADMENU2; ?>"></div>
-<div class="dojo-FisheyeListItem" onClick="load_app(5);"
-	dojo:iconsrc="../images/articles.png"
-	dojo:caption="<?php echo _MI_NW_ADMENU3; ?>"></div>
-<div class="dojo-FisheyeListItem" onClick="load_app(6);"
-	dojo:iconsrc="../images/permissions.png"
-	dojo:caption="<?php echo _MI_NW_GROUPPERMS; ?>"></div>
-<div class="dojo-FisheyeListItem" onClick="load_app(7);"
-	dojo:iconsrc="../images/purge.png"
-	dojo:caption="<?php echo _MI_NW_PRUNENEWS; ?>"></div>
-<div class="dojo-FisheyeListItem" onClick="load_app(8);"
-	dojo:iconsrc="../images/export.png"
-	dojo:caption="<?php echo _MI_NW_EXPORT; ?>"></div>
-<div class="dojo-FisheyeListItem" onClick="load_app(9);"
-	dojo:iconsrc="../images/newsletter.png"
-	dojo:caption="<?php echo _MI_NW_NEWSLETTER; ?>"></div>
-<div class="dojo-FisheyeListItem" onClick="load_app(10);"
-	dojo:iconsrc="../images/statistics.png"
-	dojo:caption="<?php echo _MI_NW_STATS; ?>"></div>
-<div class="dojo-FisheyeListItem" onClick="load_app(11);"
-	dojo:iconsrc="../images/metagen.png"
-	dojo:caption="<?php echo _MI_NW_METAGEN; ?>"></div>
-<div class="dojo-FisheyeListItem" onClick="load_app(12);"
-	dojo:iconsrc="../images/cloner.png"
-	dojo:caption="<?php echo _MI_NW_CLONER; ?>"></div>
-
-</div>
-</div>
-		<?php
-	}
-}
-
 
 function nw_collapsableBar($tablename = '', $iconname = '')
 {
+    ?>
+    <script type="text/javascript"><!--
+        function goto_URL(object) {
+            window.location.href = object.options[object.selectedIndex].value;
+        }
 
-	?>
-<script type="text/javascript"><!--
-	function goto_URL(object)
-	{
-		window.location.href = object.options[object.selectedIndex].value;
-	}
+        function toggle(id) {
+            if (document.getElementById) {
+                obj = document.getElementById(id);
+            }
+            if (document.all) {
+                obj = document.all[id];
+            }
+            if (document.layers) {
+                obj = document.layers[id];
+            }
+            if (obj) {
+                if (obj.style.display == "none") {
+                    obj.style.display = "";
+                } else {
+                    obj.style.display = "none";
+                }
+            }
+            return false;
+        }
 
-	function toggle(id)
-	{
-		if (document.getElementById) { obj = document.getElementById(id); }
-		if (document.all) { obj = document.all[id]; }
-		if (document.layers) { obj = document.layers[id]; }
-		if (obj) {
-			if (obj.style.display == "none") {
-				obj.style.display = "";
-			} else {
-				obj.style.display = "none";
-			}
-		}
-		return false;
-	}
+        var iconClose = new Image();
+        iconClose.src = '../images/close12.gif';
+        var iconOpen = new Image();
+        iconOpen.src = '../images/open12.gif';
 
-	var iconClose = new Image();
-	iconClose.src = '../images/close12.gif';
-	var iconOpen = new Image();
-	iconOpen.src = '../images/open12.gif';
+        function toggleIcon(iconName) {
+            if (document.images[iconName].src == window.iconOpen.src) {
+                document.images[iconName].src = window.iconClose.src;
+            } else if (document.images[iconName].src == window.iconClose.src) {
+                document.images[iconName].src = window.iconOpen.src;
+            }
+            return;
+        }
 
-	function toggleIcon ( iconName )
-	{
-		if ( document.images[iconName].src == window.iconOpen.src ) {
-			document.images[iconName].src = window.iconClose.src;
-		} else if ( document.images[iconName].src == window.iconClose.src ) {
-			document.images[iconName].src = window.iconOpen.src;
-		}
-		return;
-	}
-
-	//-->
-	</script>
-	<?php
-	echo "<h4 style=\"color: #2F5376; margin: 6px 0 0 0; \"><a href='#' onClick=\"toggle('" . $tablename . "'); toggleIcon('" . $iconname . "');\">";
+        //-->
+    </script>
+    <?php
+    echo "<h4 style=\"color: #2F5376; margin: 6px 0 0 0; \"><a href='#' onClick=\"toggle('" . $tablename . "'); toggleIcon('" . $iconname . "');\">";
 }
+
 ?>

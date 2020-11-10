@@ -3,7 +3,7 @@
 //  ------------------------------------------------------------------------ //
 //                XOOPS - PHP Content Management System                      //
 //                    Copyright (c) 2000 XOOPS.org                           //
-//                       <http://www.xoops.org/>                             //
+//                       <https://www.xoops.org>                             //
 //  ------------------------------------------------------------------------ //
 //  This program is free software; you can redistribute it and/or modify     //
 //  it under the terms of the GNU General Public License as published by     //
@@ -28,34 +28,31 @@
 //  ------------------------------------------------------------------------ //
 
 //Default Permission Settings
-function xoops_module_uninstall_xnews(&$xoopsModule) 
+function xoops_module_uninstall_xnews($xoopsModule)
 {
-	$module_id = $xoopsModule->getVar('mid');
-	$module_name = $xoopsModule->getVar('name');
-	$module_dirname = $xoopsModule->getVar('dirname');
-	$module_version = $xoopsModule->getVar('version');
-	$module_original = $xoopsModule->getInfo('original');
-	
-	global $xoopsDB;
-	
-	//DNPROSSI - DROP cloner control table
-	if (nw_TableExists($xoopsDB->prefix('news_clonerdata')))
-	{				
-		//Update database on clone uninstall
-		$result = $xoopsDB->query("SELECT * FROM " . $xoopsDB->prefix('news_clonerdata'));
-		list($count) = $xoopsDB->fetchRow($result);
-		
-		$result = $xoopsDB->query("SELECT clone_id FROM " . $xoopsDB->prefix('news_clonerdata') . " WHERE clone_dir = '" . $module_dirname . "' ;");
-		$tmpcloneid = $xoopsDB->fetchRow($result);
-		$cloneid = $tmpcloneid[0];	
-		$xoopsDB->query("UPDATE " . $xoopsDB->prefix('news_clonerdata') . " SET clone_installed = " . 0 . " WHERE clone_id = " . $cloneid);
-		
-		//if table is empty drop
-		if ( $count == 1 && $module_original == 1 ) 
-		{
-			$result = $xoopsDB->query("DROP TABLE " . $xoopsDB->prefix('news_clonerdata'));
-	    }  
-	}
-	return true;
+    $module_id       = $xoopsModule->getVar('mid');
+    $module_name     = $xoopsModule->getVar('name');
+    $module_dirname  = $xoopsModule->getVar('dirname');
+    $module_version  = $xoopsModule->getVar('version');
+    $module_original = $xoopsModule->getInfo('original');
+
+    global $xoopsDB;
+
+    //DNPROSSI - DROP cloner control table
+    if (nw_TableExists($xoopsDB->prefix('news_clonerdata'))) {
+        //Update database on clone uninstall
+        $result = $xoopsDB->query('SELECT * FROM ' . $xoopsDB->prefix('news_clonerdata'));
+        [$count] = $xoopsDB->fetchRow($result);
+
+        $result     = $xoopsDB->query('SELECT clone_id FROM ' . $xoopsDB->prefix('news_clonerdata') . " WHERE clone_dir = '" . $module_dirname . "' ;");
+        $tmpcloneid = $xoopsDB->fetchRow($result);
+        $cloneid    = $tmpcloneid[0];
+        $xoopsDB->query('UPDATE ' . $xoopsDB->prefix('news_clonerdata') . ' SET clone_installed = ' . 0 . ' WHERE clone_id = ' . $cloneid);
+
+        //if table is empty drop
+        if (1 == $count && 1 == $module_original) {
+            $result = $xoopsDB->query('DROP TABLE ' . $xoopsDB->prefix('news_clonerdata'));
+        }
+    }
+    return true;
 }
-?>

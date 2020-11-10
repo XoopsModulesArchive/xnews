@@ -3,7 +3,7 @@
 //  ------------------------------------------------------------------------ //
 //                XOOPS - PHP Content Management System                      //
 //                    Copyright (c) 2000 XOOPS.org                           //
-//                       <http://www.xoops.org/>                             //
+//                       <https://www.xoops.org>                             //
 //  ------------------------------------------------------------------------ //
 //  This program is free software; you can redistribute it and/or modify     //
 //  it under the terms of the GNU General Public License as published by     //
@@ -24,48 +24,46 @@
 //  along with this program; if not, write to the Free Software              //
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA //
 //  ------------------------------------------------------------------------ //
-include_once 'header.php';
-include_once NW_MODULE_PATH . '/class/class.sfiles.php';
-include_once NW_MODULE_PATH . '/class/class.newsstory.php';
+require_once __DIR__ . '/header.php';
+require_once NW_MODULE_PATH . '/class/class.sfiles.php';
+require_once NW_MODULE_PATH . '/class/class.newsstory.php';
 
-$fileid = (isset($_GET['fileid'])) ? intval($_GET['fileid']) : 0;
+$fileid = (isset($_GET['fileid'])) ? (int)$_GET['fileid'] : 0;
 if (empty($fileid)) {
-    redirect_header(NW_MODULE_URL . '/index.php',2,_ERRORS);
+    redirect_header(NW_MODULE_URL . '/index.php', 2, _ERRORS);
     exit();
 }
-$myts =& MyTextSanitizer::getInstance(); // MyTextSanitizer object
+$myts   = MyTextSanitizer::getInstance(); // MyTextSanitizer object
 $sfiles = new nw_sFiles($fileid);
 
 // Do we have the right to see the file ?
 $article = new nw_NewsStory($sfiles->getStoryid());
 // and the news, can we see it ?
-if ( $article->published() == 0 || $article->published() > time() ) {
+if (0 == $article->published() || $article->published() > time()) {
     redirect_header(NW_MODULE_URL . '/index.php', 2, _MA_NW_NOSTORY);
     exit();
 }
 // Expired
-if ( $article->expired() != 0 && $article->expired() < time() ) {
+if (0 != $article->expired() && $article->expired() < time()) {
     redirect_header(NW_MODULE_URL . '/index.php', 2, _MA_NW_NOSTORY);
     exit();
 }
 
-
-$gperm_handler =& xoops_gethandler('groupperm');
+$gpermHandler = xoops_getHandler('groupperm');
 if (is_object($xoopsUser)) {
     $groups = $xoopsUser->getGroups();
 } else {
-	$groups = XOOPS_GROUP_ANONYMOUS;
+    $groups = XOOPS_GROUP_ANONYMOUS;
 }
-if (!$gperm_handler->checkRight('nw_view', $article->topicid(), $groups, $xoopsModule->getVar('mid'))) {
-	redirect_header(NW_MODULE_URL . '/index.php', 3, _NOPERM);
-	exit();
+if (!$gpermHandler->checkRight('nw_view', $article->topicid(), $groups, $xoopsModule->getVar('mid'))) {
+    redirect_header(NW_MODULE_URL . '/index.php', 3, _NOPERM);
+    exit();
 }
 
 $sfiles->updateCounter();
-$url=NW_ATTACHED_FILES_URL.'/'.$sfiles->getDownloadname();
+$url = NW_ATTACHED_FILES_URL . '/' . $sfiles->getDownloadname();
 if (!preg_match("/^ed2k*:\/\//i", $url)) {
-	Header("Location: $url");
+    header("Location: $url");
 }
-echo "<html><head><meta http-equiv=\"Refresh\" content=\"0; URL=".$myts->htmlSpecialChars($url)."\"></meta></head><body></body></html>";
+echo '<html><head><meta http-equiv="Refresh" content="0; URL=' . htmlspecialchars($url, ENT_QUOTES | ENT_HTML5) . '"></meta></head><body></body></html>';
 exit();
-?>
